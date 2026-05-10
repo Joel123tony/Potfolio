@@ -129,13 +129,28 @@ function App() {
           creative digital experiences.
         </p>
 
-<a
-  href="/resume.pdf"
-  download
-  className="mt-10 inline-block bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
->
-  View My Resume
-</a>
+<div className="relative z-20 mt-10 flex flex-col sm:flex-row gap-4 pointer-events-auto">
+
+  {/* View Resume */}
+  <a
+    href="/resume.pdf"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block bg-gray-800 text-white px-6 py-3 rounded-full font-semibold text-center hover:scale-105 transition duration-300"
+  >
+    View Resume
+  </a>
+
+  {/* Download Resume */}
+  <a
+    href="/resume.pdf"
+    download
+    className="inline-block bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold text-center hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
+  >
+    Download Resume
+  </a>
+
+</div>
       </section>
 
       {/* About */}
