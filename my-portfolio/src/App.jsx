@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import { FiMail, FiInstagram, FiBriefcase } from "react-icons/fi"
 import { motion } from "framer-motion"
+
 function App() {
 
   const [isMuted, setIsMuted] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
-
   const videoRef = useRef(null)
 
   useEffect(() => {
@@ -36,6 +36,18 @@ function App() {
     }
 
   }, [])
+
+  useEffect(() => {
+  const moveCursor = (e) => {
+    if (!cursorRef.current) return
+
+    cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
+  }
+
+  window.addEventListener("mousemove", moveCursor)
+
+  return () => window.removeEventListener("mousemove", moveCursor)
+}, [])
 
   return (
 
@@ -451,8 +463,59 @@ function App() {
 
 </section>
 
-{/* Showreel */} <section id="media" className="px-8 py-24 bg-[#111111]" > <div className="max-w-6xl mx-auto"> <div className="text-center mb-16"> <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4"> Featured Reel </p> <h2 className="text-4xl font-bold mb-6"> Cinematic Creative Showcase </h2> </div> <div className="relative rounded-3xl overflow-hidden border border-gray-800 shadow-2xl h-[300px] md:h-[600px]"> <video ref={videoRef} muted={isMuted} loop playsInline controls preload="metadata" className="w-full h-full object-cover" > <source src="/ordinary person (gojo).mp4" type="video/mp4" /> </video> <div className="absolute inset-0 bg-black/30"></div> <button onClick={() => setIsMuted(!isMuted)} className="absolute top-6 right-6 bg-black/60 backdrop-blur-md border border-gray-700 px-5 py-2 rounded-full text-white hover:border-[#D4AF37] transition duration-300 z-20" > {isMuted ? "Unmute 🔊" : "Mute 🔇"} </button> </div> </div> </section> 
-{/* Contact Section */}
+{/* Showreel */}
+<section id="media" className="px-8 py-24 bg-[#111111]">
+
+  <div className="max-w-6xl mx-auto">
+
+    <div className="text-center mb-16">
+
+      <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
+        Featured Reel
+      </p>
+
+      <h2 className="text-4xl font-bold mb-6">
+        Cinematic Creative Showcase
+      </h2>
+    </div>
+
+    {/* Video Container */}
+    <div className="relative rounded-3xl overflow-hidden border border-gray-800 shadow-2xl h-[300px] md:h-[600px]">
+
+      <video
+  ref={videoRef}
+  className="w-full h-full object-cover"
+  autoPlay
+  loop
+  playsInline
+  muted={isMuted}
+  preload="metadata"
+>
+  <source
+    src="https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1778408003/ordinary_person_gojo_lzietp.mp4"
+    type="video/mp4"
+  />
+</video>
+
+<button
+  onClick={() => {
+    setIsMuted((prev) => {
+      const newMuted = !prev
+      if (videoRef.current) {
+        videoRef.current.muted = newMuted
+      }
+      return newMuted
+    })
+  }}
+  className="absolute top-6 right-6 bg-black/60 px-4 py-2 rounded-full border border-gray-700"
+>
+  {isMuted ? "Unmute 🔊" : "Mute 🔇"}
+</button>
+</div>
+</div>
+
+</section>
+  {/* Contact Section */}
 <section
   id="contact"
   className="px-8 py-24 bg-black border-t border-gray-800 relative overflow-hidden"
