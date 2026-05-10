@@ -129,14 +129,13 @@ function App() {
           creative digital experiences.
         </p>
 
-        <a
-          href="my-portfolio/public/Joel Jebasingh J_Resume.pdf"
-          download
-          className="mt-10 bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
-        >
-          View My Resume
-        </a>
-
+ <a
+  href="/Joel_Jebasingh_Resume.pdf"
+  download
+  className="mt-10 bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
+>
+  View My Resume
+</a>
       </section>
 
       {/* About */}
