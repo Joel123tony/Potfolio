@@ -134,7 +134,9 @@ function App() {
   download
   className="mt-10 bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
 >
+  <button>
   View My Resume
+  </button>
 </a>
       </section>
 
