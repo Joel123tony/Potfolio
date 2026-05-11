@@ -133,7 +133,7 @@ function App() {
 
   {/* View Resume */}
   <a
-    href="/resume.pdf"
+    href="/resume.pdf?v=2"
     target="_blank"
     rel="noopener noreferrer"
     className="inline-block bg-gray-800 text-white px-6 py-3 rounded-full font-semibold text-center hover:scale-105 transition duration-300"
