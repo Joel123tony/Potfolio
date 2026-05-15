@@ -708,7 +708,7 @@ function App() {
             </a>
 
             <a
-              href="mailto:Joeljebasingh0@gmail.com"
+              href="mailto:joeljebasingh0@gmail.com"
               className="text-gray-400 hover:text-[#D4AF37]"
             >
               Email
