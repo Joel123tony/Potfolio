@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { FiMail, FiInstagram, FiBriefcase } from "react-icons/fi"
 import { motion } from "framer-motion"
+import ChatBot from "./components/ChatBot";
 
 function App() {
 
@@ -90,6 +91,7 @@ function App() {
           </a>
 
         </li>
+        
 
       ))}
 
