@@ -3,10 +3,17 @@ import { FiMail, FiInstagram, FiBriefcase } from "react-icons/fi"
 import { motion } from "framer-motion"
 import ChatBot from "./components/ChatBot"
 
+const heroIntroText = "Building modern edits, modern websites and creative digital experiences."
+
 function App() {
 
   const [isMuted, setIsMuted] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [typedHeroText, setTypedHeroText] = useState(() => {
+    if (typeof window === "undefined") return ""
+
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? heroIntroText : ""
+  })
   const videoRef = useRef(null)
   const cursorRef = useRef(null)
 
@@ -61,6 +68,26 @@ function App() {
 
   return () => window.removeEventListener("mousemove", moveCursor)
 }, [])
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    if (prefersReducedMotion) {
+      return undefined
+    }
+
+    let index = 0
+    const typingTimer = window.setInterval(() => {
+      index += 1
+      setTypedHeroText(heroIntroText.slice(0, index))
+
+      if (index >= heroIntroText.length) {
+        window.clearInterval(typingTimer)
+      }
+    }, 38)
+
+    return () => window.clearInterval(typingTimer)
+  }, [])
 
   return (
 
@@ -154,9 +181,10 @@ function App() {
           & Video Editor
         </h1>
 
-        <p className="text-gray-400 mt-6 max-w-2xl text-lg">
-          Building modern edits, modern websites and
-          creative digital experiences.
+        <p className="text-gray-400 mt-6 max-w-2xl min-h-[3.5rem] text-lg leading-relaxed">
+          <span className="hero-typewriter">
+            {typedHeroText}
+          </span>
         </p>
 
 <div className="relative z-20 mt-10 flex flex-col sm:flex-row gap-4 pointer-events-auto">
