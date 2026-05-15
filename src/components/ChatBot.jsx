@@ -1,96 +1,122 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { FiMessageCircle, FiSend, FiX, FiZap } from "react-icons/fi"
+import { FiDownload, FiExternalLink, FiMessageCircle, FiSend, FiX, FiZap } from "react-icons/fi"
 
 const starterMessages = [
   {
     role: "bot",
-    text: "Hi, I am Joel's AI assistant. Ask me about his skills, projects, edits, or how to contact him.",
+    text: "Hey, I am Joel's AI assistant. I can answer questions, guide you around the site, or help you contact Joel.",
+    actions: [
+      { label: "View Projects", type: "scroll", target: "projects" },
+      { label: "Contact Joel", type: "scroll", target: "contact" },
+    ],
   },
 ]
 
 const quickPrompts = [
-  "What can Joel build?",
-  "Joel mail id?",
-  "Show his projects",
+  "Can I see projects?",
+  "How can I hire Joel?",
+  "What edits can he do?",
 ]
 
-function getLocalReply(text) {
-  const question = text.toLowerCase()
-  const asksContact = [
-    "contact",
-    "email",
-    "mail",
-    "mail id",
-    "gmail",
-    "id",
-    "hire",
-    "reach",
-    "message",
-  ].some((word) => question.includes(word))
+const sectionWords = {
+  projects: ["project", "projects", "portfolio", "work", "works", "showcase", "see"],
+  contact: ["contact", "email", "mail", "gmail", "hire", "reach", "message", "call"],
+  skills: ["skill", "skills", "tool", "tools", "technology", "tech", "stack", "software"],
+  media: ["video", "reel", "edit", "editing", "media", "showreel", "cinematic"],
+  about: ["about", "who", "intro", "introduction", "joel"],
+  home: ["home", "top", "start", "hero"],
+}
 
-  if (asksContact) {
-    return "Sure. Joel's mail ID is joeljebasingh0@gmail.com. You can message him there for website work, video editing, 3D projects, or collaborations."
-  }
-
-  if (question.includes("project") || question.includes("work")) {
-    return "Joel has three main project areas here: cinematic video edits, a responsive e-commerce website, and 3D creative visuals. The Projects section has the links to view them."
-  }
-
-  if (question.includes("edit") || question.includes("video") || question.includes("reel")) {
-    return "Joel creates cinematic video edits, smooth transitions, and creative reels. His editing style is focused on motion, timing, and storytelling."
-  }
-
-  if (question.includes("skill") || question.includes("build") || question.includes("developer") || question.includes("website")) {
-    return "Joel can build modern React websites and portfolio-style experiences. He also works with Node.js, MongoDB, frontend design, Premiere Pro, After Effects, and Blender."
-  }
-
-  if (question.includes("resume") || question.includes("cv")) {
-    return "You can view or download Joel's resume from the buttons in the home section of this portfolio."
-  }
-
-  if (question.includes("who") || question.includes("about")) {
-    return "Joel is a creative developer, video editor, and 3D artist. He mixes frontend development with cinematic editing and visual design."
-  }
-
-  return "I can help with that. Joel is a creative developer, video editor, and 3D artist. Ask me about his mail ID, projects, skills, resume, or editing work."
+function hasAny(text, words) {
+  return words.some((word) => text.includes(word))
 }
 
 function getSectionTarget(text) {
   const question = text.toLowerCase()
 
-  if (question.includes("project") || question.includes("work") || question.includes("portfolio")) {
-    return "projects"
-  }
-
-  if (
-    question.includes("contact") ||
-    question.includes("email") ||
-    question.includes("mail") ||
-    question.includes("gmail") ||
-    question.includes("hire") ||
-    question.includes("reach")
-  ) {
-    return "contact"
-  }
-
-  if (question.includes("skill") || question.includes("tool") || question.includes("technology")) {
-    return "skills"
-  }
-
-  if (question.includes("video") || question.includes("reel") || question.includes("edit") || question.includes("media")) {
-    return "media"
-  }
-
-  if (question.includes("about") || question.includes("who is joel")) {
-    return "about"
-  }
-
-  if (question.includes("home") || question.includes("top")) {
-    return "home"
-  }
+  if (hasAny(question, sectionWords.projects)) return "projects"
+  if (hasAny(question, sectionWords.contact)) return "contact"
+  if (hasAny(question, sectionWords.skills)) return "skills"
+  if (hasAny(question, sectionWords.media)) return "media"
+  if (question.includes("about") || question.includes("who is joel")) return "about"
+  if (hasAny(question, sectionWords.home)) return "home"
 
   return null
+}
+
+function getActionsForMessage(text, reply = "") {
+  const combined = `${text} ${reply}`.toLowerCase()
+  const actions = []
+
+  if (hasAny(combined, sectionWords.projects)) {
+    actions.push({ label: "View Projects", type: "scroll", target: "projects" })
+  }
+
+  if (hasAny(combined, sectionWords.contact)) {
+    actions.push({ label: "Contact Joel", type: "scroll", target: "contact" })
+    actions.push({ label: "Send Email", type: "link", href: "mailto:joeljebasingh0@gmail.com" })
+  }
+
+  if (hasAny(combined, sectionWords.skills)) {
+    actions.push({ label: "View Skills", type: "scroll", target: "skills" })
+  }
+
+  if (hasAny(combined, sectionWords.media)) {
+    actions.push({ label: "Watch Reel", type: "scroll", target: "media" })
+  }
+
+  if (combined.includes("resume") || combined.includes("cv")) {
+    actions.push({ label: "Download Resume", type: "link", href: "/resume.pdf", icon: "download" })
+  }
+
+  if (combined.includes("instagram")) {
+    actions.push({ label: "Open Instagram", type: "link", href: "https://www.instagram.com/lara._.editz._/" })
+  }
+
+  return actions.slice(0, 3)
+}
+
+function getLocalReply(text) {
+  const question = text.toLowerCase()
+
+  if (["hi", "hello", "hey", "yo"].some((word) => question.trim() === word || question.startsWith(`${word} `))) {
+    return "Hey. I am here with you. Ask me anything about Joel's projects, skills, editing work, resume, or contact details."
+  }
+
+  if (question.includes("thank")) {
+    return "You're welcome. I can also take you straight to Joel's projects, reel, resume, or contact section."
+  }
+
+  if (hasAny(question, sectionWords.contact) || question.includes("mail id") || question.includes("id")) {
+    return "Sure. Joel's mail ID is joeljebasingh0@gmail.com. You can message him there for website work, video editing, 3D projects, or collaborations."
+  }
+
+  if (hasAny(question, sectionWords.projects)) {
+    return "Yes. Joel has cinematic video edits, a responsive e-commerce website, and 3D creative visuals. I can take you to the Projects section now."
+  }
+
+  if (hasAny(question, sectionWords.media)) {
+    return "Joel creates cinematic edits, reels, transitions, and story-driven video work. The featured reel section is the best place to see his editing style."
+  }
+
+  if (hasAny(question, sectionWords.skills)) {
+    return "Joel's main stack is React, Node.js, MongoDB, frontend design, Premiere Pro, After Effects, Blender, OBS Studio, and creative production tools."
+  }
+
+  if (question.includes("resume") || question.includes("cv")) {
+    return "Joel's resume is available from the home section. You can view it in the browser or download it directly."
+  }
+
+  if (question.includes("price") || question.includes("cost") || question.includes("budget")) {
+    return "Pricing depends on the project size and deadline. The easiest next step is to email Joel with what you need, your timeline, and any references."
+  }
+
+  if (question.includes("who") || question.includes("about")) {
+    return "Joel is a creative developer, video editor, and 3D artist. His style mixes clean React websites with cinematic editing and visual design."
+  }
+
+  return "I can answer that best if you ask it around Joel's portfolio, projects, skills, video editing, resume, or contact details. You can also ask me to take you to any section."
 }
 
 export default function ChatBot() {
@@ -108,6 +134,31 @@ export default function ChatBot() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chat, loading, isOpen])
 
+  const scrollToSection = (target, shouldClose = true) => {
+    document.getElementById(target)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    })
+
+    if (shouldClose) {
+      window.setTimeout(() => setIsOpen(false), 350)
+    }
+  }
+
+  const handleAction = (action) => {
+    if (action.type === "scroll") {
+      scrollToSection(action.target)
+      return
+    }
+
+    if (action.type === "prompt") {
+      sendMessage(action.prompt)
+      return
+    }
+
+    window.open(action.href, action.href.startsWith("mailto:") ? "_self" : "_blank", "noopener,noreferrer")
+  }
+
   const sendMessage = async (text = message) => {
     const cleanMessage = text.trim()
     const sectionTarget = getSectionTarget(cleanMessage)
@@ -118,8 +169,9 @@ export default function ChatBot() {
       role: "user",
       text: cleanMessage,
     }
+    const nextChat = [...chat, userMessage]
 
-    setChat((prev) => [...prev, userMessage])
+    setChat(nextChat)
     setMessage("")
     setLoading(true)
 
@@ -131,6 +183,7 @@ export default function ChatBot() {
         },
         body: JSON.stringify({
           message: cleanMessage,
+          history: nextChat.slice(-8).map(({ role, text }) => ({ role, text })),
         }),
       })
 
@@ -139,33 +192,32 @@ export default function ChatBot() {
       }
 
       const data = await res.json()
+      const botText = data.reply || getLocalReply(cleanMessage)
 
       setChat((prev) => [
         ...prev,
         {
           role: "bot",
-          text: data.reply || getLocalReply(cleanMessage),
+          text: botText,
+          actions: data.actions?.length ? data.actions : getActionsForMessage(cleanMessage, botText),
         },
       ])
     } catch {
+      const botText = getLocalReply(cleanMessage)
+
       setChat((prev) => [
         ...prev,
         {
           role: "bot",
-          text: getLocalReply(cleanMessage),
+          text: botText,
+          actions: getActionsForMessage(cleanMessage, botText),
         },
       ])
     } finally {
       setLoading(false)
 
       if (sectionTarget) {
-        window.setTimeout(() => {
-          document.getElementById(sectionTarget)?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          })
-          setIsOpen(false)
-        }, 850)
+        window.setTimeout(() => scrollToSection(sectionTarget), 950)
       }
     }
   }
@@ -179,7 +231,7 @@ export default function ChatBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.96 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-4 w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-[#D4AF37]/40 bg-[#050505]/95 text-white shadow-[0_0_55px_rgba(212,175,55,0.2)] backdrop-blur-xl sm:w-[390px]"
+            className="mb-4 w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-[#D4AF37]/40 bg-[#050505]/95 text-white shadow-[0_0_55px_rgba(212,175,55,0.2)] backdrop-blur-xl sm:w-[410px]"
           >
             <div className="relative overflow-hidden border-b border-white/10 bg-[#111111] px-4 py-4">
               <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-[#D4AF37]/20 blur-3xl"></div>
@@ -190,7 +242,7 @@ export default function ChatBot() {
                   </div>
                   <div>
                     <h2 className="text-base font-bold tracking-wide">Joel AI Assistant</h2>
-                    <p className="text-xs text-gray-400">Portfolio guide</p>
+                    <p className="text-xs text-gray-400">Natural answers + site actions</p>
                   </div>
                 </div>
 
@@ -205,7 +257,7 @@ export default function ChatBot() {
               </div>
             </div>
 
-            <div className="h-[360px] space-y-4 overflow-y-auto px-4 py-5 text-sm">
+            <div className="h-[380px] space-y-4 overflow-y-auto px-4 py-5 text-sm">
               {chat.map((msg, index) => (
                 <motion.div
                   key={`${msg.role}-${index}`}
@@ -214,14 +266,32 @@ export default function ChatBot() {
                   transition={{ duration: 0.22 }}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  <div
-                    className={`max-w-[82%] rounded-2xl px-4 py-3 leading-relaxed ${
-                      msg.role === "user"
-                        ? "rounded-br-md bg-[#D4AF37] text-black shadow-[0_0_22px_rgba(212,175,55,0.25)]"
-                        : "rounded-bl-md border border-white/10 bg-white/[0.06] text-gray-100"
-                    }`}
-                  >
-                    {msg.text}
+                  <div className={`max-w-[86%] ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                    <div
+                      className={`rounded-2xl px-4 py-3 leading-relaxed ${
+                        msg.role === "user"
+                          ? "rounded-br-md bg-[#D4AF37] text-black shadow-[0_0_22px_rgba(212,175,55,0.25)]"
+                          : "rounded-bl-md border border-white/10 bg-white/[0.06] text-gray-100"
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+
+                    {msg.role === "bot" && msg.actions?.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {msg.actions.map((action) => (
+                          <button
+                            key={`${index}-${action.label}`}
+                            type="button"
+                            onClick={() => handleAction(action)}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 px-3 py-1.5 text-xs text-[#D4AF37] transition duration-300 hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black"
+                          >
+                            {action.icon === "download" ? <FiDownload aria-hidden="true" /> : <FiExternalLink aria-hidden="true" />}
+                            {action.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -262,7 +332,7 @@ export default function ChatBot() {
                 <textarea
                   rows="1"
                   value={message}
-                  placeholder="Ask about Joel..."
+                  placeholder="Ask naturally..."
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
