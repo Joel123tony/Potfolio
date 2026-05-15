@@ -28,6 +28,34 @@ const sectionWords = {
   home: ["home", "top", "start", "hero"],
 }
 
+const negativeWords = [
+  "bad",
+  "waste",
+  "wast",
+  "worst",
+  "loser",
+  "losser",
+  "useless",
+  "trash",
+  "poor",
+  "hate",
+]
+
+const positiveWords = [
+  "nice",
+  "good",
+  "great",
+  "awesome",
+  "amazing",
+  "cool",
+  "super",
+  "best",
+  "love",
+  "talented",
+  "creative",
+  "impressive",
+]
+
 function hasAny(text, words) {
   return words.some((word) => text.includes(word))
 }
@@ -86,6 +114,14 @@ function getLocalReply(text) {
 
   if (question.includes("thank")) {
     return "You're welcome. I can also take you straight to Joel's projects, reel, resume, or contact section."
+  }
+
+  if (question.includes("joel") && hasAny(question, negativeWords)) {
+    return "I get what you mean, but I would keep it respectful. Joel is still learning and building his creative skills, and this portfolio shows his progress in web development, video editing, and 3D work."
+  }
+
+  if (question.includes("joel") && hasAny(question, positiveWords)) {
+    return "That's kind of you to say. Joel will really appreciate that support. He has been putting effort into his websites, edits, and creative projects."
   }
 
   if (hasAny(question, sectionWords.contact) || question.includes("mail id") || question.includes("id")) {

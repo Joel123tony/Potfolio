@@ -5,6 +5,34 @@ const profile = {
   instagram: "https://www.instagram.com/lara._.editz._/",
 }
 
+const negativeWords = [
+  "bad",
+  "waste",
+  "wast",
+  "worst",
+  "loser",
+  "losser",
+  "useless",
+  "trash",
+  "poor",
+  "hate",
+]
+
+const positiveWords = [
+  "nice",
+  "good",
+  "great",
+  "awesome",
+  "amazing",
+  "cool",
+  "super",
+  "best",
+  "love",
+  "talented",
+  "creative",
+  "impressive",
+]
+
 function includesAny(text, words) {
   return words.some((word) => text.includes(word))
 }
@@ -50,6 +78,14 @@ function getPortfolioReply(message) {
 
   if (question.includes("thank")) {
     return "You're welcome. I can also take you straight to Joel's projects, reel, resume, or contact section."
+  }
+
+  if (question.includes("joel") && includesAny(question, negativeWords)) {
+    return "I get what you mean, but I would keep it respectful. Joel is still learning and building his creative skills, and this portfolio shows his progress in web development, video editing, and 3D work."
+  }
+
+  if (question.includes("joel") && includesAny(question, positiveWords)) {
+    return "That's kind of you to say. Joel will really appreciate that support. He has been putting effort into his websites, edits, and creative projects."
   }
 
   if (includesAny(question, ["contact", "email", "mail", "mail id", "gmail", "hire", "reach", "message", "id"])) {
@@ -149,6 +185,8 @@ Your style:
 - Keep replies short: usually 1 to 3 sentences.
 - If the user asks to see, open, view, or go somewhere, say you can take them there.
 - If the user asks something outside Joel's portfolio, answer briefly only if useful, then guide back to Joel.
+- If the user insults Joel, stay calm and positive. Do not insult the user. Gently ask for respect and highlight Joel's learning, effort, and creative progress.
+- If the user praises Joel, appreciate the user warmly and say Joel would value the support.
 - Do not invent links, phone numbers, companies, degrees, clients, or experience not listed below.
 
 Joel's known profile:
