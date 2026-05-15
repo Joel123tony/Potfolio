@@ -600,11 +600,11 @@ function App() {
         </h3>
 
         <p className="text-gray-400 mb-6 break-all">
-          Joeljebasingh0@gmail.com
+          joeljebasingh0@gmail.com
         </p>
 
         <a
-          href="mailto:Joeljebasingh0@gmail.com"
+          href="mailto:joeljebasingh0@gmail.com"
           className="text-[#D4AF37] hover:underline"
         >
           Send Mail →
