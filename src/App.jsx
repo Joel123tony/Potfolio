@@ -7,6 +7,16 @@ function App() {
   const [isMuted, setIsMuted] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
   const videoRef = useRef(null)
+  const cursorRef = useRef(null)
+
+  const navItems = [
+    "home",
+    "about",
+    "skills",
+    "projects",
+    "media",
+    "contact"
+  ]
 
   useEffect(() => {
 
@@ -25,13 +35,15 @@ function App() {
       }
     )
 
-    if (videoRef.current) {
-      observer.observe(videoRef.current)
+    const videoElement = videoRef.current
+
+    if (videoElement) {
+      observer.observe(videoElement)
     }
 
     return () => {
-      if (videoRef.current) {
-        observer.unobserve(videoRef.current)
+      if (videoElement) {
+        observer.unobserve(videoElement)
       }
     }
 
@@ -66,16 +78,9 @@ function App() {
     {/* Desktop Menu */}
     <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
 
-      {[
-        "home",
-        "about",
-        "skills",
-        "projects",
-        "media",
-        "contact"
-      ].map((item, index) => (
+      {navItems.map((item) => (
 
-        <li key={index}>
+        <li key={item}>
 
           <a
             href={`#${item}`}
@@ -94,6 +99,8 @@ function App() {
     <button
       onClick={() => setMenuOpen(!menuOpen)}
       className="md:hidden flex flex-col gap-1.5 group"
+      aria-label="Toggle navigation menu"
+      aria-expanded={menuOpen}
     >
 
       <span className={`w-7 h-[2px] bg-white transition duration-300 ${menuOpen ? "rotate-45 translate-y-[8px]" : ""}`}></span>
@@ -104,6 +111,27 @@ function App() {
 
     </button>
 
+  </div>
+
+  {/* Mobile Menu */}
+  <div
+    className={`md:hidden overflow-hidden border-t border-gray-800 bg-black/95 transition-all duration-300 ${
+      menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+    }`}
+  >
+    <ul className="flex flex-col px-6 py-4 text-sm font-medium">
+      {navItems.map((item) => (
+        <li key={item}>
+          <a
+            href={`#${item}`}
+            onClick={() => setMenuOpen(false)}
+            className="block py-4 uppercase tracking-[2px] text-gray-300 hover:text-[#D4AF37] transition duration-300"
+          >
+            {item}
+          </a>
+        </li>
+      ))}
+    </ul>
   </div>
 
 </nav>      
