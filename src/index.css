@@ -4,38 +4,34 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  top: 0 !important;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-.hero-typewriter {
-  position: relative;
+.translate-widget {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  height: 0;
+  overflow: hidden;
 }
 
-.hero-typewriter::after {
-  content: "";
-  display: inline-block;
-  width: 2px;
-  height: 1.15em;
-  margin-left: 4px;
-  vertical-align: -0.18em;
-  background: #D4AF37;
-  box-shadow: 0 0 14px rgba(212, 175, 55, 0.65);
-  animation: typewriter-caret 0.85s ease-in-out infinite;
+.goog-te-banner-frame,
+.goog-te-gadget,
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+.VIpgJd-ZVi9od-aZ2wEe {
+  display: none !important;
 }
 
-@keyframes typewriter-caret {
-  0%,
-  45% {
-    opacity: 1;
-  }
-
-  46%,
-  100% {
-    opacity: 0.15;
-  }
+body > .skiptranslate,
+body > iframe.skiptranslate {
+  display: none !important;
 }
 
 @keyframes loading {

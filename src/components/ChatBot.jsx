@@ -1,158 +1,117 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { FiDownload, FiExternalLink, FiMessageCircle, FiSend, FiX, FiZap } from "react-icons/fi"
+import { FiMessageCircle, FiSend, FiX, FiZap } from "react-icons/fi"
 
 const starterMessages = [
   {
     role: "bot",
-    text: "Hey, I am Joel's AI assistant. I can answer questions, guide you around the site, or help you contact Joel.",
-    actions: [
-      { label: "View Projects", type: "scroll", target: "projects" },
-      { label: "Contact Joel", type: "scroll", target: "contact" },
-    ],
+    text: "Hi, I am Joel's AI assistant. Ask me about his skills, projects, edits, or how to contact him.",
   },
 ]
 
 const quickPrompts = [
-  "Can I see projects?",
-  "How can I hire Joel?",
-  "What edits can he do?",
+  "What can Joel build?",
+  "Joel mail id?",
+  "Show his projects",
 ]
 
-const sectionWords = {
-  projects: ["project", "projects", "portfolio", "work", "works", "showcase", "see"],
-  contact: ["contact", "email", "mail", "gmail", "hire", "reach", "message", "call"],
-  skills: ["skill", "skills", "tool", "tools", "technology", "tech", "stack", "software"],
-  media: ["video", "reel", "edit", "editing", "media", "showreel", "cinematic"],
-  about: ["about", "who", "intro", "introduction", "joel"],
-  home: ["home", "top", "start", "hero"],
-}
+const CHAT_TIMEOUT_MS = 1800
 
-const negativeWords = [
-  "bad",
-  "waste",
-  "wast",
-  "worst",
-  "loser",
-  "losser",
-  "useless",
-  "trash",
-  "poor",
-  "hate",
-]
+const resumeSummary =
+  "Joel Jebasingh J is based in Chennai, India. Phone: 8939386459. Email: joeljebasingh0@gmail.com. Portfolio: https://joelpotfolio1.netlify.app/. He is an aspiring Full-Stack Developer, Game Developer, and Creative Designer. Education: BCA Computer Applications from Mar Gregorios College of Arts and Science, Chennai, 2025, 60.25%; Higher Secondary from Daniel Thomas Matriculation HSS, Chennai, 2022, 52.33%; Secondary from Daniel Thomas Matriculation HSS, Chennai, 2020, 43.8%. Skills: HTML5, CSS, JavaScript, responsive design, Python, MySQL, MongoDB, Roblox Studio, Unreal Engine 5, Photoshop, Premiere Pro, After Effects, Blender 3D animation basics, and MS Office. Projects: responsive websites and UI practice projects, Roblox Obby game with checkpoints and UI systems, simulator-style game concept, UE5 FPS prototype, UE5 cinematic environment design, video editing, motion graphics, posters, and thumbnails. Strengths: fast learner, creativity, problem solving, and adaptability."
 
-const positiveWords = [
-  "nice",
-  "good",
-  "great",
-  "awesome",
-  "amazing",
-  "cool",
-  "super",
-  "best",
-  "love",
-  "talented",
-  "creative",
-  "impressive",
-]
+function getLocalReply(text) {
+  const question = text.toLowerCase()
+  const asksContact = [
+    "contact",
+    "email",
+    "mail",
+    "mail id",
+    "gmail",
+    "id",
+    "hire",
+    "reach",
+    "message",
+  ].some((word) => question.includes(word))
 
-function hasAny(text, words) {
-  return words.some((word) => text.includes(word))
+  if (asksContact) {
+    return "Sure. Joel's mail ID is joeljebasingh0@gmail.com. You can message him there for website work, video editing, 3D projects, or collaborations."
+  }
+
+  if (question.includes("phone") || question.includes("number") || question.includes("mobile")) {
+    return "Joel's phone number on the resume is 8939386459, and his email is joeljebasingh0@gmail.com."
+  }
+
+  if (question.includes("education") || question.includes("college") || question.includes("bca") || question.includes("percentage") || question.includes("school")) {
+    return "Joel studied BCA Computer Applications at Mar Gregorios College of Arts and Science, Chennai, graduating in 2025 with 60.25%. His 12th percentage is 52.33%, and his 10th percentage is 43.8% from Daniel Thomas Matriculation HSS."
+  }
+
+  if (question.includes("project") || question.includes("work")) {
+    return "Joel's resume projects include responsive websites, UI practice projects, a Roblox Obby with checkpoints and UI systems, a simulator-style game concept, UE5 FPS prototype, UE5 cinematic environment design, video edits, posters, thumbnails, and motion graphics."
+  }
+
+  if (question.includes("edit") || question.includes("video") || question.includes("reel")) {
+    return "Joel creates cinematic video edits, smooth transitions, and creative reels. His editing style is focused on motion, timing, and storytelling."
+  }
+
+  if (question.includes("skill") || question.includes("build") || question.includes("developer") || question.includes("website")) {
+    return "Joel's skills include HTML5, CSS, JavaScript, responsive design, Python, MySQL, MongoDB, Roblox Studio, Unreal Engine 5, Photoshop, Premiere Pro, After Effects, Blender basics, MS Office, and React website work."
+  }
+
+  if (question.includes("resume") || question.includes("cv")) {
+    return resumeSummary
+  }
+
+  if (question.includes("strength") || question.includes("good at")) {
+    return "Joel's resume strengths are fast learning, creativity, problem solving, and adaptability."
+  }
+
+  if (question.includes("ai") || question.includes("prompt")) {
+    return "Joel is up to date with AI knowledge and knows how to use AI tools for ideas, research, content, coding help, and faster creative work."
+  }
+
+  if (question.includes("who") || question.includes("about")) {
+    return "Joel is a creative developer, video editor, and 3D artist. He mixes frontend development with cinematic editing and visual design."
+  }
+
+  return "I can help with that. Joel is a creative developer, video editor, and 3D artist. Ask me about his mail ID, projects, skills, resume, or editing work."
 }
 
 function getSectionTarget(text) {
   const question = text.toLowerCase()
 
-  if (hasAny(question, sectionWords.projects)) return "projects"
-  if (hasAny(question, sectionWords.contact)) return "contact"
-  if (hasAny(question, sectionWords.skills)) return "skills"
-  if (hasAny(question, sectionWords.media)) return "media"
-  if (question.includes("about") || question.includes("who is joel")) return "about"
-  if (hasAny(question, sectionWords.home)) return "home"
+  if (question.includes("project") || question.includes("work") || question.includes("portfolio")) {
+    return "projects"
+  }
+
+  if (
+    question.includes("contact") ||
+    question.includes("email") ||
+    question.includes("mail") ||
+    question.includes("gmail") ||
+    question.includes("hire") ||
+    question.includes("reach")
+  ) {
+    return "contact"
+  }
+
+  if (question.includes("skill") || question.includes("tool") || question.includes("technology")) {
+    return "skills"
+  }
+
+  if (question.includes("video") || question.includes("reel") || question.includes("edit") || question.includes("media")) {
+    return "media"
+  }
+
+  if (question.includes("about") || question.includes("who is joel")) {
+    return "about"
+  }
+
+  if (question.includes("home") || question.includes("top")) {
+    return "home"
+  }
 
   return null
-}
-
-function getActionsForMessage(text, reply = "") {
-  const combined = `${text} ${reply}`.toLowerCase()
-  const actions = []
-
-  if (hasAny(combined, sectionWords.projects)) {
-    actions.push({ label: "View Projects", type: "scroll", target: "projects" })
-  }
-
-  if (hasAny(combined, sectionWords.contact)) {
-    actions.push({ label: "Contact Joel", type: "scroll", target: "contact" })
-    actions.push({ label: "Send Email", type: "link", href: "mailto:joeljebasingh0@gmail.com" })
-  }
-
-  if (hasAny(combined, sectionWords.skills)) {
-    actions.push({ label: "View Skills", type: "scroll", target: "skills" })
-  }
-
-  if (hasAny(combined, sectionWords.media)) {
-    actions.push({ label: "Watch Reel", type: "scroll", target: "media" })
-  }
-
-  if (combined.includes("resume") || combined.includes("cv")) {
-    actions.push({ label: "Download Resume", type: "link", href: "/resume.pdf", icon: "download" })
-  }
-
-  if (combined.includes("instagram")) {
-    actions.push({ label: "Open Instagram", type: "link", href: "https://www.instagram.com/lara._.editz._/" })
-  }
-
-  return actions.slice(0, 3)
-}
-
-function getLocalReply(text) {
-  const question = text.toLowerCase()
-
-  if (["hi", "hello", "hey", "yo"].some((word) => question.trim() === word || question.startsWith(`${word} `))) {
-    return "Hey. I am here with you. Ask me anything about Joel's projects, skills, editing work, resume, or contact details."
-  }
-
-  if (question.includes("thank")) {
-    return "You're welcome. I can also take you straight to Joel's projects, reel, resume, or contact section."
-  }
-
-  if (question.includes("joel") && hasAny(question, negativeWords)) {
-    return "I get what you mean, but I would keep it respectful. Joel is still learning and building his creative skills, and this portfolio shows his progress in web development, video editing, and 3D work."
-  }
-
-  if (question.includes("joel") && hasAny(question, positiveWords)) {
-    return "That's kind of you to say. Joel will really appreciate that support. He has been putting effort into his websites, edits, and creative projects."
-  }
-
-  if (hasAny(question, sectionWords.contact) || question.includes("mail id") || question.includes("id")) {
-    return "Sure. Joel's mail ID is joeljebasingh0@gmail.com. You can message him there for website work, video editing, 3D projects, or collaborations."
-  }
-
-  if (hasAny(question, sectionWords.projects)) {
-    return "Yes. Joel has cinematic video edits, a responsive e-commerce website, and 3D creative visuals. I can take you to the Projects section now."
-  }
-
-  if (hasAny(question, sectionWords.media)) {
-    return "Joel creates cinematic edits, reels, transitions, and story-driven video work. The featured reel section is the best place to see his editing style."
-  }
-
-  if (hasAny(question, sectionWords.skills)) {
-    return "Joel's main stack is React, Node.js, MongoDB, frontend design, Premiere Pro, After Effects, Blender, OBS Studio, and creative production tools."
-  }
-
-  if (question.includes("resume") || question.includes("cv")) {
-    return "Joel's resume is available from the home section. You can view it in the browser or download it directly."
-  }
-
-  if (question.includes("price") || question.includes("cost") || question.includes("budget")) {
-    return "Pricing depends on the project size and deadline. The easiest next step is to email Joel with what you need, your timeline, and any references."
-  }
-
-  if (question.includes("who") || question.includes("about")) {
-    return "Joel is a creative developer, video editor, and 3D artist. His style mixes clean React websites with cinematic editing and visual design."
-  }
-
-  return "I can answer that best if you ask it around Joel's portfolio, projects, skills, video editing, resume, or contact details. You can also ask me to take you to any section."
 }
 
 export default function ChatBot() {
@@ -170,31 +129,6 @@ export default function ChatBot() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chat, loading, isOpen])
 
-  const scrollToSection = (target, shouldClose = true) => {
-    document.getElementById(target)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    })
-
-    if (shouldClose) {
-      window.setTimeout(() => setIsOpen(false), 350)
-    }
-  }
-
-  const handleAction = (action) => {
-    if (action.type === "scroll") {
-      scrollToSection(action.target)
-      return
-    }
-
-    if (action.type === "prompt") {
-      sendMessage(action.prompt)
-      return
-    }
-
-    window.open(action.href, action.href.startsWith("mailto:") ? "_self" : "_blank", "noopener,noreferrer")
-  }
-
   const sendMessage = async (text = message) => {
     const cleanMessage = text.trim()
     const sectionTarget = getSectionTarget(cleanMessage)
@@ -205,55 +139,60 @@ export default function ChatBot() {
       role: "user",
       text: cleanMessage,
     }
-    const nextChat = [...chat, userMessage]
 
-    setChat(nextChat)
+    setChat((prev) => [...prev, userMessage])
     setMessage("")
     setLoading(true)
 
     try {
+      const controller = new AbortController()
+      const timeoutId = window.setTimeout(() => controller.abort(), CHAT_TIMEOUT_MS)
+
       const res = await fetch(apiUrl, {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: cleanMessage,
-          history: nextChat.slice(-8).map(({ role, text }) => ({ role, text })),
         }),
       })
+
+      window.clearTimeout(timeoutId)
 
       if (!res.ok) {
         throw new Error("Chat request failed")
       }
 
       const data = await res.json()
-      const botText = data.reply || getLocalReply(cleanMessage)
 
       setChat((prev) => [
         ...prev,
         {
           role: "bot",
-          text: botText,
-          actions: data.actions?.length ? data.actions : getActionsForMessage(cleanMessage, botText),
+          text: data.reply || getLocalReply(cleanMessage),
         },
       ])
     } catch {
-      const botText = getLocalReply(cleanMessage)
-
       setChat((prev) => [
         ...prev,
         {
           role: "bot",
-          text: botText,
-          actions: getActionsForMessage(cleanMessage, botText),
+          text: getLocalReply(cleanMessage),
         },
       ])
     } finally {
       setLoading(false)
 
       if (sectionTarget) {
-        window.setTimeout(() => scrollToSection(sectionTarget), 950)
+        window.setTimeout(() => {
+          document.getElementById(sectionTarget)?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          })
+          setIsOpen(false)
+        }, 850)
       }
     }
   }
@@ -267,7 +206,7 @@ export default function ChatBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.96 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-4 w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-[#D4AF37]/40 bg-[#050505]/95 text-white shadow-[0_0_55px_rgba(212,175,55,0.2)] backdrop-blur-xl sm:w-[410px]"
+            className="mb-4 w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-[#D4AF37]/40 bg-[#050505]/95 text-white shadow-[0_0_55px_rgba(212,175,55,0.2)] backdrop-blur-xl sm:w-[390px]"
           >
             <div className="relative overflow-hidden border-b border-white/10 bg-[#111111] px-4 py-4">
               <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-[#D4AF37]/20 blur-3xl"></div>
@@ -278,7 +217,7 @@ export default function ChatBot() {
                   </div>
                   <div>
                     <h2 className="text-base font-bold tracking-wide">Joel AI Assistant</h2>
-                    <p className="text-xs text-gray-400">Natural answers + site actions</p>
+                    <p className="text-xs text-gray-400">Portfolio guide</p>
                   </div>
                 </div>
 
@@ -293,7 +232,7 @@ export default function ChatBot() {
               </div>
             </div>
 
-            <div className="h-[380px] space-y-4 overflow-y-auto px-4 py-5 text-sm">
+            <div className="h-[360px] space-y-4 overflow-y-auto px-4 py-5 text-sm">
               {chat.map((msg, index) => (
                 <motion.div
                   key={`${msg.role}-${index}`}
@@ -302,32 +241,14 @@ export default function ChatBot() {
                   transition={{ duration: 0.22 }}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  <div className={`max-w-[86%] ${msg.role === "user" ? "text-right" : "text-left"}`}>
-                    <div
-                      className={`rounded-2xl px-4 py-3 leading-relaxed ${
-                        msg.role === "user"
-                          ? "rounded-br-md bg-[#D4AF37] text-black shadow-[0_0_22px_rgba(212,175,55,0.25)]"
-                          : "rounded-bl-md border border-white/10 bg-white/[0.06] text-gray-100"
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
-
-                    {msg.role === "bot" && msg.actions?.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {msg.actions.map((action) => (
-                          <button
-                            key={`${index}-${action.label}`}
-                            type="button"
-                            onClick={() => handleAction(action)}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 px-3 py-1.5 text-xs text-[#D4AF37] transition duration-300 hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black"
-                          >
-                            {action.icon === "download" ? <FiDownload aria-hidden="true" /> : <FiExternalLink aria-hidden="true" />}
-                            {action.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                  <div
+                    className={`max-w-[82%] rounded-2xl px-4 py-3 leading-relaxed ${
+                      msg.role === "user"
+                        ? "rounded-br-md bg-[#D4AF37] text-black shadow-[0_0_22px_rgba(212,175,55,0.25)]"
+                        : "rounded-bl-md border border-white/10 bg-white/[0.06] text-gray-100"
+                    }`}
+                  >
+                    {msg.text}
                   </div>
                 </motion.div>
               ))}
@@ -350,14 +271,14 @@ export default function ChatBot() {
             </div>
 
             <div className="border-t border-white/10 bg-black/70 p-4">
-              <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+              <div className="mb-3 flex flex-wrap gap-2">
                 {quickPrompts.map((prompt) => (
                   <button
                     key={prompt}
                     type="button"
                     onClick={() => sendMessage(prompt)}
                     disabled={loading}
-                    className="shrink-0 rounded-full border border-[#D4AF37]/30 px-3 py-2 text-xs text-gray-300 transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-full border border-[#D4AF37]/30 px-3 py-2 text-xs text-gray-300 transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {prompt}
                   </button>
@@ -368,7 +289,7 @@ export default function ChatBot() {
                 <textarea
                   rows="1"
                   value={message}
-                  placeholder="Ask naturally..."
+                  placeholder="Ask about Joel..."
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {

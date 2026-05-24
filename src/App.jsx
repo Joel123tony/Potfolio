@@ -1,19 +1,35 @@
 import { useState, useEffect, useRef } from "react"
-import { FiMail, FiInstagram, FiBriefcase } from "react-icons/fi"
+import { FiMail, FiInstagram, FiBriefcase, FiFilm, FiCode, FiBox, FiCpu, FiGlobe, FiMenu, FiX } from "react-icons/fi"
 import { motion } from "framer-motion"
 import ChatBot from "./components/ChatBot"
 
-const heroIntroText = "Building modern edits, modern websites and creative digital experiences."
-
 function App() {
 
+  const showcaseItems = [
+    {
+      title: "Cinematic Editing Reel",
+      type: "video",
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1778408003/ordinary_person_gojo_lzietp.mp4",
+    },
+    {
+      title: "Video Editing Project Drive",
+      type: "drive",
+      src: "https://drive.google.com/embeddedfolderview?id=1efMW_BAGA_4nwJQeFEJI-fwzmNYYeoJb#grid",
+    },
+    {
+      title: "3D Project Drive",
+      type: "drive",
+      src: "https://drive.google.com/embeddedfolderview?id=1g8lWP0LlUI2xz9_5PFhxM7VJzFsM-JJf#grid",
+    },
+  ]
+
+  const [showcaseItem] = useState(() => {
+    return showcaseItems[Math.floor(Math.random() * showcaseItems.length)]
+  })
   const [isMuted, setIsMuted] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [typedHeroText, setTypedHeroText] = useState(() => {
-    if (typeof window === "undefined") return ""
-
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? heroIntroText : ""
-  })
+  const [translateOpen, setTranslateOpen] = useState(false)
+  const [selectedLanguage, setSelectedLanguage] = useState("EN")
   const videoRef = useRef(null)
   const cursorRef = useRef(null)
 
@@ -21,15 +37,28 @@ function App() {
     "home",
     "about",
     "skills",
+    "services",
     "projects",
     "media",
     "contact"
+  ]
+
+  const languages = [
+    { code: "en", label: "EN", name: "English" },
+    { code: "ta", label: "TA", name: "Tamil" },
+    { code: "hi", label: "HI", name: "Hindi" },
+    { code: "ml", label: "ML", name: "Malayalam" },
+    { code: "te", label: "TE", name: "Telugu" },
+    { code: "fr", label: "FR", name: "French" },
+    { code: "es", label: "ES", name: "Spanish" },
   ]
 
   useEffect(() => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+
+        if (!videoRef.current) return
 
         if (entry.isIntersecting) {
           videoRef.current.play()
@@ -70,24 +99,45 @@ function App() {
 }, [])
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    window.googleTranslateElementInit = () => {
+      if (!window.google?.translate) return
 
-    if (prefersReducedMotion) {
-      return undefined
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          includedLanguages: "en,ta,hi,ml,te,fr,es",
+          autoDisplay: false,
+        },
+        "google_translate_element"
+      )
     }
 
-    let index = 0
-    const typingTimer = window.setInterval(() => {
-      index += 1
-      setTypedHeroText(heroIntroText.slice(0, index))
-
-      if (index >= heroIntroText.length) {
-        window.clearInterval(typingTimer)
-      }
-    }, 38)
-
-    return () => window.clearInterval(typingTimer)
+    if (!document.getElementById("google-translate-script")) {
+      const script = document.createElement("script")
+      script.id = "google-translate-script"
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+      document.body.appendChild(script)
+    }
   }, [])
+
+  const translatePage = (language) => {
+    setSelectedLanguage(language.label)
+    setTranslateOpen(false)
+
+    const applyTranslation = () => {
+      const select = document.querySelector(".goog-te-combo")
+
+      if (!select) return false
+
+      select.value = language.code
+      select.dispatchEvent(new Event("change"))
+      return true
+    }
+
+    if (!applyTranslation()) {
+      window.setTimeout(applyTranslation, 700)
+    }
+  }
 
   return (
 
@@ -103,8 +153,10 @@ function App() {
       JOEL
     </h1>
 
-    {/* Desktop Menu */}
-    <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
+    <div className="hidden md:flex items-center gap-4">
+
+      {/* Desktop Menu */}
+      <ul className="flex items-center gap-5 text-sm font-medium">
 
       {navItems.map((item) => (
 
@@ -118,29 +170,82 @@ function App() {
           </a>
 
         </li>
-        
 
       ))}
 
-    </ul>
+      </ul>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setTranslateOpen((current) => !current)}
+          className="flex h-10 items-center gap-2 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-3 text-[#D4AF37] transition duration-300 hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black"
+          aria-label="Translate page"
+          aria-expanded={translateOpen}
+        >
+          <FiGlobe className="text-lg" aria-hidden="true" />
+          <span className="text-xs font-bold">{selectedLanguage}</span>
+        </button>
+
+        {translateOpen && (
+          <div className="absolute right-0 top-12 w-44 overflow-hidden rounded-2xl border border-gray-800 bg-black/95 shadow-[0_0_35px_rgba(212,175,55,0.2)] backdrop-blur-xl">
+            {languages.map((language) => (
+              <button
+                key={language.code}
+                type="button"
+                onClick={() => translatePage(language)}
+                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-300 transition duration-300 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
+              >
+                <span>{language.name}</span>
+                <span className="text-xs font-bold text-[#D4AF37]">{language.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+    </div>
+
+    <div className="flex items-center gap-3 md:hidden">
+      <button
+        type="button"
+        onClick={() => setTranslateOpen((current) => !current)}
+        className="grid h-10 w-10 place-items-center rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37]"
+        aria-label="Translate page"
+        aria-expanded={translateOpen}
+      >
+        <FiGlobe className="text-lg" aria-hidden="true" />
+      </button>
 
     {/* Mobile Button */}
     <button
       onClick={() => setMenuOpen(!menuOpen)}
-      className="md:hidden flex flex-col gap-1.5 group"
+      className="grid h-10 w-10 place-items-center rounded-full border border-gray-800 text-white transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
       aria-label="Toggle navigation menu"
       aria-expanded={menuOpen}
     >
-
-      <span className={`w-7 h-[2px] bg-white transition duration-300 ${menuOpen ? "rotate-45 translate-y-[8px]" : ""}`}></span>
-
-      <span className={`w-7 h-[2px] bg-white transition duration-300 ${menuOpen ? "opacity-0" : ""}`}></span>
-
-      <span className={`w-7 h-[2px] bg-white transition duration-300 ${menuOpen ? "-rotate-45 -translate-y-[8px]" : ""}`}></span>
+      {menuOpen ? <FiX className="text-xl" aria-hidden="true" /> : <FiMenu className="text-xl" aria-hidden="true" />}
 
     </button>
+    </div>
 
   </div>
+
+  {translateOpen && (
+    <div className="absolute right-6 top-20 z-50 w-44 overflow-hidden rounded-2xl border border-gray-800 bg-black/95 shadow-[0_0_35px_rgba(212,175,55,0.2)] backdrop-blur-xl md:hidden">
+      {languages.map((language) => (
+        <button
+          key={language.code}
+          type="button"
+          onClick={() => translatePage(language)}
+          className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-300 transition duration-300 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
+        >
+          <span>{language.name}</span>
+          <span className="text-xs font-bold text-[#D4AF37]">{language.label}</span>
+        </button>
+      ))}
+    </div>
+  )}
 
   {/* Mobile Menu */}
   <div
@@ -164,9 +269,11 @@ function App() {
   </div>
 
 </nav>      
+<div id="google_translate_element" className="translate-widget"></div>
+
 <section
         id="home"
-        className="relative flex flex-col items-center justify-center text-center py-32 px-6 overflow-hidden"
+        className="relative flex flex-col items-center justify-center text-center py-32 px-6 overflow-hidden border-b border-gray-900"
       >
         {/* Animated Background Glow */}
 <div className="absolute w-[600px] h-[600px] bg-[#D4AF37]/10 blur-[140px] rounded-full animate-pulse"></div>
@@ -181,10 +288,9 @@ function App() {
           & Video Editor
         </h1>
 
-        <p className="text-gray-400 mt-6 max-w-2xl min-h-[3.5rem] text-lg leading-relaxed">
-          <span className="hero-typewriter">
-            {typedHeroText}
-          </span>
+        <p className="text-gray-400 mt-6 max-w-2xl text-lg">
+          Building modern edits, modern websites and
+          creative digital experiences.
         </p>
 
 <div className="relative z-20 mt-10 flex flex-col sm:flex-row gap-4 pointer-events-auto">
@@ -214,7 +320,7 @@ function App() {
       {/* About */}
       <section
         id="about"
-        className="px-8 py-24 bg-[#111111]"
+        className="px-8 py-24 bg-[#111111] border-b border-gray-800"
       >
 
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
@@ -292,7 +398,7 @@ function App() {
       {/* Skills */}
       <section
         id="skills"
-        className="px-8 py-24 bg-black"
+        className="px-8 py-24 bg-black border-b border-gray-800"
       >
 
         <motion.div
@@ -379,10 +485,90 @@ function App() {
 
       </section>
 
+{/* Services Section */}
+<section
+  id="services"
+  className="px-8 py-24 bg-[#111111] border-b border-gray-800"
+>
+
+  <motion.div
+    className="max-w-6xl mx-auto"
+    initial={{ opacity: 0, y: 80 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+    viewport={{ once: true }}
+  >
+
+    <div className="text-center mb-16">
+
+      <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
+        Services
+      </p>
+
+      <h2 className="text-4xl font-bold">
+        What I Can Create
+      </h2>
+
+    </div>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      {[
+        {
+          icon: FiFilm,
+          title: "Video Editing",
+          desc: "Cinematic reels, smooth transitions, social edits and storytelling cuts."
+        },
+        {
+          icon: FiCode,
+          title: "Web Development",
+          desc: "Responsive portfolio, business and product websites built with modern tools."
+        },
+        {
+          icon: FiBox,
+          title: "3D Visuals",
+          desc: "Creative 3D renders, product-style visuals and motion-ready concepts."
+        },
+        {
+          icon: FiCpu,
+          title: "AI Prompting",
+          desc: "Up to date with AI knowledge and skilled at using AI tools for smart, creative and faster work."
+        }
+      ].map((service, index) => {
+        const Icon = service.icon
+
+        return (
+          <div
+            key={index}
+            className="bg-black border border-gray-800 rounded-2xl p-7 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,0.28)] hover:-translate-y-2 transition duration-500"
+          >
+
+            <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-6">
+              <Icon className="text-3xl text-[#D4AF37]" />
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">
+              {service.title}
+            </h3>
+
+            <p className="text-gray-400 leading-relaxed">
+              {service.desc}
+            </p>
+
+          </div>
+        )
+      })}
+
+    </div>
+
+  </motion.div>
+
+</section>
+
 {/* Projects Section */}
 <section
   id="projects"
-  className="px-8 py-24 bg-[#111111]"
+  className="px-8 py-24 bg-black border-b border-gray-800"
 >
 
   <motion.div
@@ -410,7 +596,7 @@ function App() {
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 
       {/* Card 1 */}
-      <div className="group bg-black border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
+      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
 
         <div className="overflow-hidden">
 
@@ -450,7 +636,7 @@ function App() {
       </div>
 
       {/* Card 2 */}
-      <div className="group bg-black border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
+      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
 
         <div className="overflow-hidden">
 
@@ -490,7 +676,7 @@ function App() {
       </div>
 
       {/* Card 3 */}
-      <div className="group bg-black border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
+      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
 
         <div className="overflow-hidden">
 
@@ -536,24 +722,26 @@ function App() {
 </section>
 
 {/* Showreel */}
-<section id="media" className="px-8 py-24 bg-[#111111]">
+<section id="media" className="px-8 py-24 bg-[#111111] border-b border-gray-800">
 
   <div className="max-w-6xl mx-auto">
 
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Featured Reel
+        Featured Showcase
       </p>
 
       <h2 className="text-4xl font-bold mb-6">
-        Cinematic Creative Showcase
+        {showcaseItem.title}
       </h2>
     </div>
 
     {/* Video Container */}
     <div className="relative rounded-3xl overflow-hidden border border-gray-800 shadow-2xl h-[300px] md:h-[600px]">
 
+      {showcaseItem.type === "video" ? (
+        <>
       <video
   ref={videoRef}
   className="w-full h-full object-cover"
@@ -564,7 +752,7 @@ function App() {
   preload="metadata"
 >
   <source
-    src="https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1778408003/ordinary_person_gojo_lzietp.mp4"
+    src={showcaseItem.src}
     type="video/mp4"
   />
 </video>
@@ -583,6 +771,15 @@ function App() {
 >
   {isMuted ? "Unmute 🔊" : "Mute 🔇"}
 </button>
+        </>
+      ) : (
+        <iframe
+          title={showcaseItem.title}
+          src={showcaseItem.src}
+          className="h-full w-full bg-black"
+          loading="lazy"
+        ></iframe>
+      )}
 </div>
 </div>
 
