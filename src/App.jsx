@@ -5,26 +5,15 @@ import ChatBot from "./components/ChatBot"
 
 function App() {
 
-  const showcaseItems = [
-    {
-      title: "Cinematic Editing Reel",
-      type: "video",
-      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1778408003/ordinary_person_gojo_lzietp.mp4",
-    },
-    {
-      title: "Video Editing Project Drive",
-      type: "drive",
-      src: "https://drive.google.com/embeddedfolderview?id=1efMW_BAGA_4nwJQeFEJI-fwzmNYYeoJb#grid",
-    },
-    {
-      title: "3D Project Drive",
-      type: "drive",
-      src: "https://drive.google.com/embeddedfolderview?id=1g8lWP0LlUI2xz9_5PFhxM7VJzFsM-JJf#grid",
-    },
+  const showcaseVideos = [
+    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599114/fornite_montag00_dl1j2w.mp4",
+    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599119/Naa_Gali__anime_edit_sitebe.mp4",
+    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599116/jennei_c4pknc.mp4",
+    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599426/atlantis_1_nlnpmv.mp4",
   ]
 
-  const [showcaseItem] = useState(() => {
-    return showcaseItems[Math.floor(Math.random() * showcaseItems.length)]
+  const [showcaseVideo] = useState(() => {
+    return showcaseVideos[Math.floor(Math.random() * showcaseVideos.length)]
   })
   const [isMuted, setIsMuted] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -729,20 +718,19 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Featured Showcase
+        Featured Reel
       </p>
 
       <h2 className="text-4xl font-bold mb-6">
-        {showcaseItem.title}
+        Cinematic Creative Showcase
       </h2>
     </div>
 
     {/* Video Container */}
     <div className="relative rounded-3xl overflow-hidden border border-gray-800 shadow-2xl h-[300px] md:h-[600px]">
 
-      {showcaseItem.type === "video" ? (
-        <>
       <video
+  key={showcaseVideo}
   ref={videoRef}
   className="w-full h-full object-cover"
   autoPlay
@@ -752,7 +740,7 @@ function App() {
   preload="metadata"
 >
   <source
-    src={showcaseItem.src}
+    src={showcaseVideo}
     type="video/mp4"
   />
 </video>
@@ -771,15 +759,6 @@ function App() {
 >
   {isMuted ? "Unmute 🔊" : "Mute 🔇"}
 </button>
-        </>
-      ) : (
-        <iframe
-          title={showcaseItem.title}
-          src={showcaseItem.src}
-          className="h-full w-full bg-black"
-          loading="lazy"
-        ></iframe>
-      )}
 </div>
 </div>
 
