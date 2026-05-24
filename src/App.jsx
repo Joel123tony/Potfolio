@@ -6,6 +6,10 @@ import ChatBot from "./components/ChatBot"
 function App() {
 
   const showcaseVideos = [
+      {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1778408003/ordinary_person_gojo_lzietp.webm",
+      orientation: "landscape",
+    },
     {
       src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599114/fornite_montag00_dl1j2w.mp4",
       orientation: "landscape",
