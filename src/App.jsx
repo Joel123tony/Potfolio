@@ -6,10 +6,38 @@ import ChatBot from "./components/ChatBot"
 function App() {
 
   const showcaseVideos = [
-    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599114/fornite_montag00_dl1j2w.mp4",
-    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599119/Naa_Gali__anime_edit_sitebe.mp4",
-    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599116/jennei_c4pknc.mp4",
-    "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599426/atlantis_1_nlnpmv.mp4",
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599114/fornite_montag00_dl1j2w.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599119/Naa_Gali__anime_edit_sitebe.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599116/jennei_c4pknc.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599426/atlantis_1_nlnpmv.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599560/3d_hall_z9hz2b.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599557/3d_render_mwitdz.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599559/Ishowspped_rqxwzb.mp4",
+      orientation: "portrait",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599559/Andrew_emma_ls17ab.mp4",
+      orientation: "portrait",
+    },
   ]
 
   const [showcaseVideo] = useState(() => {
@@ -727,12 +755,20 @@ function App() {
     </div>
 
     {/* Video Container */}
-    <div className="relative rounded-3xl overflow-hidden border border-gray-800 shadow-2xl h-[300px] md:h-[600px]">
+    <div className={`relative overflow-hidden rounded-3xl border border-gray-800 shadow-2xl ${
+      showcaseVideo.orientation === "portrait"
+        ? "flex h-[560px] max-h-[76vh] items-center justify-center bg-black md:h-[680px]"
+        : "h-[300px] bg-black md:h-[600px]"
+    }`}>
 
       <video
-  key={showcaseVideo}
+  key={showcaseVideo.src}
   ref={videoRef}
-  className="w-full h-full object-cover"
+  className={
+    showcaseVideo.orientation === "portrait"
+      ? "h-full max-h-full w-auto max-w-full object-contain shadow-[0_0_60px_rgba(212,175,55,0.18)]"
+      : "h-full w-full object-cover"
+  }
   autoPlay
   loop
   playsInline
@@ -740,7 +776,7 @@ function App() {
   preload="metadata"
 >
   <source
-    src={showcaseVideo}
+    src={showcaseVideo.src}
     type="video/mp4"
   />
 </video>
