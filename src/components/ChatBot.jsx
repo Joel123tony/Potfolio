@@ -20,8 +20,151 @@ const CHAT_TIMEOUT_MS = 1800
 const resumeSummary =
   "Joel Jebasingh J is based in Chennai, India. Phone: 8939386459. Email: joeljebasingh0@gmail.com. Portfolio: https://joelpotfolio1.netlify.app/. He is an aspiring Full-Stack Developer, Game Developer, and Creative Designer. Education: BCA Computer Applications from Mar Gregorios College of Arts and Science, Chennai, 2025, 60.25%; Higher Secondary from Daniel Thomas Matriculation HSS, Chennai, 2022, 52.33%; Secondary from Daniel Thomas Matriculation HSS, Chennai, 2020, 43.8%. Skills: HTML5, CSS, JavaScript, responsive design, Python, MySQL, MongoDB, Roblox Studio, Unreal Engine 5, Photoshop, Premiere Pro, After Effects, Blender 3D animation basics, and MS Office. Projects: responsive websites and UI practice projects, Roblox Obby game with checkpoints and UI systems, simulator-style game concept, UE5 FPS prototype, UE5 cinematic environment design, video editing, motion graphics, posters, and thumbnails. Strengths: fast learner, creativity, problem solving, and adaptability."
 
+const latestOnePieceEpisodeReply =
+  "The latest One Piece anime episode is Episode 1164, titled \"Saul's Resolve - The Inherited Will of Ohara.\" It released on May 31, 2026."
+
+function isOnePieceQuestion(question) {
+  return [
+    "one piece",
+    "onepiece",
+    "luffy",
+    "zoro",
+    "sanji",
+    "nami",
+    "usopp",
+    "chopper",
+    "robin",
+    "franky",
+    "brook",
+    "jinbe",
+    "straw hat",
+    "strawhat",
+    "grand line",
+    "devil fruit",
+    "pirate king",
+    "thousand sunny",
+    "going merry",
+    "shanks",
+    "kaido",
+    "big mom",
+    "blackbeard",
+    "ace",
+    "sabo",
+    "law",
+    "wano",
+  ].some((word) => question.includes(word))
+}
+
+function isLatestOnePieceEpisodeQuestion(question) {
+  const asksEpisode = question.includes("episode") || question.includes("ep")
+  const asksLatest = question.includes("latest") || question.includes("last") || question.includes("new") || question.includes("current")
+
+  return asksEpisode && asksLatest && isOnePieceQuestion(question)
+}
+
+function getOnePieceReply(question) {
+  if (isLatestOnePieceEpisodeQuestion(question)) {
+    return latestOnePieceEpisodeReply
+  }
+
+  if (question.includes("luffy")) {
+    return "Monkey D. Luffy is the captain of the Straw Hat Pirates. His dream is to become the Pirate King."
+  }
+
+  if (question.includes("zoro")) {
+    return "Roronoa Zoro is the Straw Hat Pirates' swordsman. His dream is to become the world's greatest swordsman."
+  }
+
+  if (question.includes("sanji")) {
+    return "Sanji is the Straw Hat Pirates' cook. He is known for powerful kicks, sharp style, and his dream of finding the All Blue."
+  }
+
+  if (question.includes("nami")) {
+    return "Nami is the Straw Hat Pirates' navigator. Her dream is to draw a complete map of the world."
+  }
+
+  if (question.includes("usopp")) {
+    return "Usopp is the Straw Hat Pirates' sniper. He is known for creative tricks, brave moments, and his dream of becoming a brave warrior of the sea."
+  }
+
+  if (question.includes("chopper")) {
+    return "Tony Tony Chopper is the Straw Hat Pirates' doctor. He is a reindeer who ate the Human-Human Fruit."
+  }
+
+  if (question.includes("robin")) {
+    return "Nico Robin is the Straw Hat Pirates' archaeologist. She can read Poneglyphs and wants to uncover the true history."
+  }
+
+  if (question.includes("franky")) {
+    return "Franky is the Straw Hat Pirates' shipwright. He built the Thousand Sunny and dreams of seeing it sail around the world."
+  }
+
+  if (question.includes("brook")) {
+    return "Brook is the Straw Hat Pirates' musician. He is a living skeleton with the Revive-Revive Fruit power."
+  }
+
+  if (question.includes("jinbe")) {
+    return "Jinbe is the Straw Hat Pirates' helmsman. He is a fish-man master of Fish-Man Karate and a former Warlord of the Sea."
+  }
+
+  if (question.includes("devil fruit")) {
+    return "Devil Fruits are mysterious fruits in One Piece that give special powers, but the user loses the ability to swim."
+  }
+
+  if (question.includes("haki")) {
+    return "Haki is a spiritual power in One Piece. The main types are Observation Haki, Armament Haki, and Conqueror's Haki."
+  }
+
+  if (question.includes("grand line")) {
+    return "The Grand Line is the dangerous sea route where most of One Piece's biggest adventures happen."
+  }
+
+  if (question.includes("wano")) {
+    return "Wano Country is a samurai-themed land in One Piece and the setting of a major arc involving Kaido and the Kozuki clan."
+  }
+
+  if (question.includes("shanks")) {
+    return "Shanks is one of the Four Emperors and the pirate who inspired Luffy to become a pirate."
+  }
+
+  if (question.includes("blackbeard")) {
+    return "Blackbeard, also known as Marshall D. Teach, is one of the major pirate villains in One Piece."
+  }
+
+  if (question.includes("ace")) {
+    return "Portgas D. Ace is Luffy's sworn brother and a major emotional figure in One Piece."
+  }
+
+  if (question.includes("law")) {
+    return "Trafalgar Law is a pirate captain and doctor with the Op-Op Fruit power."
+  }
+
+  if (question.includes("thousand sunny")) {
+    return "The Thousand Sunny is the Straw Hat Pirates' main ship after the Going Merry. It was built by Franky."
+  }
+
+  if (question.includes("going merry")) {
+    return "The Going Merry was the Straw Hat Pirates' first ship and one of the most emotional parts of One Piece."
+  }
+
+  if (question.includes("straw hat") || question.includes("strawhat")) {
+    return "The Straw Hat Pirates are Luffy's crew. Their core dream is to sail the Grand Line and help Luffy become Pirate King."
+  }
+
+  if (question.includes("pirate king")) {
+    return "The Pirate King is the title given to the person who finds the One Piece and reaches the top of the pirate world."
+  }
+
+  return "One Piece is an adventure anime and manga about Monkey D. Luffy and the Straw Hat Pirates searching for the legendary treasure called the One Piece."
+}
+
 function getLocalReply(text) {
   const question = text.toLowerCase()
+
+  if (isOnePieceQuestion(question)) {
+    return getOnePieceReply(question)
+  }
+
   const asksContact = [
     "contact",
     "email",
@@ -40,6 +183,27 @@ function getLocalReply(text) {
 
   if (question.includes("phone") || question.includes("number") || question.includes("mobile")) {
     return "Joel's phone number on the resume is 8939386459, and his email is joeljebasingh0@gmail.com."
+  }
+
+  if (
+    (question.includes("10th") || question.includes("tenth") || question.includes("sslc")) &&
+    (question.includes("percentage") || question.includes("percent") || question.includes("%"))
+  ) {
+    return "Joel's 10th percentage is 43.8%."
+  }
+
+  if (
+    (question.includes("12th") || question.includes("twelfth") || question.includes("hsc") || question.includes("higher secondary")) &&
+    (question.includes("percentage") || question.includes("percent") || question.includes("%"))
+  ) {
+    return "Joel's 12th percentage is 52.33%."
+  }
+
+  if (
+    (question.includes("bca") || question.includes("college") || question.includes("degree")) &&
+    (question.includes("percentage") || question.includes("percent") || question.includes("%"))
+  ) {
+    return "Joel's BCA percentage is 60.25%."
   }
 
   if (question.includes("education") || question.includes("college") || question.includes("bca") || question.includes("percentage") || question.includes("school")) {
@@ -114,7 +278,34 @@ function getSectionTarget(text) {
   return null
 }
 
-export default function ChatBot() {
+function getThemeCommand(text) {
+  const question = text.toLowerCase()
+  const asksTheme = question.includes("theme") || question.includes("background") || question.includes("bg")
+
+  if (!asksTheme) return null
+
+  if (
+    question.includes("one piece") ||
+    question.includes("onepiece") ||
+    question.includes("pirate") ||
+    question.includes("anime")
+  ) {
+    return "one-piece"
+  }
+
+  if (
+    question.includes("normal") ||
+    question.includes("default") ||
+    question.includes("portfolio") ||
+    question.includes("original")
+  ) {
+    return "normal"
+  }
+
+  return null
+}
+
+export default function ChatBot({ onThemeChange }) {
   const [isOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [chat, setChat] = useState(starterMessages)
@@ -132,6 +323,7 @@ export default function ChatBot() {
   const sendMessage = async (text = message) => {
     const cleanMessage = text.trim()
     const sectionTarget = getSectionTarget(cleanMessage)
+    const themeCommand = getThemeCommand(cleanMessage)
 
     if (!cleanMessage || loading) return
 
@@ -142,6 +334,23 @@ export default function ChatBot() {
 
     setChat((prev) => [...prev, userMessage])
     setMessage("")
+
+    if (themeCommand) {
+      onThemeChange?.(themeCommand === "one-piece")
+      setChat((prev) => [
+        ...prev,
+        {
+          role: "bot",
+          text:
+            themeCommand === "one-piece"
+              ? "Done. I changed the portfolio to the One Piece theme."
+              : "Done. I changed the portfolio back to the normal theme.",
+        },
+      ])
+      setIsOpen(false)
+      return
+    }
+
     setLoading(true)
 
     try {

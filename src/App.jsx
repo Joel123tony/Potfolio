@@ -1,7 +1,49 @@
 import { useState, useEffect, useRef } from "react"
-import { FiMail, FiInstagram, FiBriefcase, FiFilm, FiCode, FiBox, FiCpu, FiGlobe, FiMenu, FiX } from "react-icons/fi"
+import { FiAnchor, FiMail, FiInstagram, FiBriefcase, FiFilm, FiCode, FiBox, FiCpu, FiGlobe, FiMenu, FiX } from "react-icons/fi"
 import { motion } from "framer-motion"
 import ChatBot from "./components/ChatBot"
+
+function AnimatedStatNumber({ value, suffix = "" }) {
+  const [displayValue, setDisplayValue] = useState(() => {
+    if (typeof window === "undefined") return 0
+
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? value : 0
+  })
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    if (prefersReducedMotion) {
+      return
+    }
+
+    let animationFrame
+    const duration = 1100
+    const startedAt = performance.now()
+
+    const animate = (currentTime) => {
+      const progress = Math.min((currentTime - startedAt) / duration, 1)
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+      setDisplayValue(Math.round(value * easedProgress))
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate)
+      }
+    }
+
+    animationFrame = requestAnimationFrame(animate)
+
+    return () => cancelAnimationFrame(animationFrame)
+  }, [value])
+
+  return (
+    <span>
+      {displayValue}
+      {suffix}
+    </span>
+  )
+}
 
 function App() {
 
@@ -51,6 +93,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [translateOpen, setTranslateOpen] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState("EN")
+  const [themeToggleOn, setThemeToggleOn] = useState(false)
   const videoRef = useRef(null)
   const cursorRef = useRef(null)
 
@@ -160,9 +203,25 @@ function App() {
     }
   }
 
+  const handleThemeToggle = () => {
+    setThemeToggleOn((current) => !current)
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    })
+  }
+
+  const setThemeMode = (enabled) => {
+    setThemeToggleOn(enabled)
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    })
+  }
+
   return (
 
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className={`min-h-screen bg-black text-white overflow-x-hidden ${themeToggleOn ? "section-bg-enabled" : ""}`}>
 
 {/* Navbar */}
 <nav className="fixed top-0 left-0 w-full z-50 border-b border-gray-800 bg-black/70 backdrop-blur-xl">
@@ -370,9 +429,9 @@ function App() {
 
           <div className="grid grid-cols-2 gap-6">
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
-                2+
+                <AnimatedStatNumber value={2} suffix="+" />
               </h3>
 
               <p className="text-gray-400">
@@ -380,9 +439,9 @@ function App() {
               </p>
             </div>
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
-                10+
+                <AnimatedStatNumber value={10} suffix="+" />
               </h3>
 
               <p className="text-gray-400">
@@ -390,9 +449,9 @@ function App() {
               </p>
             </div>
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
-                6+
+                <AnimatedStatNumber value={6} suffix="+" />
               </h3>
 
               <p className="text-gray-400">
@@ -400,7 +459,7 @@ function App() {
               </p>
             </div>
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
                 ∞
               </h3>
@@ -960,6 +1019,20 @@ function App() {
               Email
             </a>
 
+            <button
+              type="button"
+              className="footer-theme-toggle"
+              onClick={handleThemeToggle}
+              aria-label="Toggle theme"
+              aria-pressed={themeToggleOn}
+            >
+              <span className="footer-theme-toggle__track" aria-hidden="true">
+                <span className="footer-theme-toggle__thumb">
+                  {themeToggleOn ? <FiAnchor /> : "J"}
+                </span>
+              </span>
+            </button>
+
           </div>
 
         </div>
@@ -974,7 +1047,7 @@ function App() {
 
       </footer>
 
-      <ChatBot />
+      <ChatBot onThemeChange={setThemeMode} />
 
     </div>
 

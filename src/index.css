@@ -7,6 +7,184 @@ body {
   top: 0 !important;
 }
 
+.section-bg-enabled :is(#home, #about, #skills, #services, #projects, #media, #contact) {
+  position: relative;
+  overflow: hidden;
+  border-color: transparent;
+  box-shadow:
+    inset 0 48px 56px rgba(0, 0, 0, 0.34),
+    inset 0 -48px 56px rgba(0, 0, 0, 0.38);
+}
+
+.section-bg-enabled #home {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.54)),
+    linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.54)),
+    url("./assets/one piece theme/hero_section_background.png") center / cover no-repeat;
+}
+
+.section-bg-enabled #about {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.46)),
+    linear-gradient(rgba(17, 17, 17, 0.66), rgba(17, 17, 17, 0.72)),
+    url("./assets/one piece theme/about me_section_background.png") center / cover no-repeat;
+}
+
+.section-bg-enabled #skills {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.54)),
+    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.66)),
+    url("./assets/one piece theme/my skill_section_background.png") center / cover no-repeat;
+}
+
+.section-bg-enabled #services {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.46)),
+    linear-gradient(rgba(17, 17, 17, 0.64), rgba(17, 17, 17, 0.72)),
+    url("./assets/one piece theme/service_section_background.png") center / cover no-repeat;
+}
+
+.section-bg-enabled #projects {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.54)),
+    linear-gradient(rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.66)),
+    url("./assets/one piece theme/project_section_background.png") center / cover no-repeat;
+}
+
+.section-bg-enabled #media {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.46)),
+    linear-gradient(rgba(17, 17, 17, 0.58), rgba(17, 17, 17, 0.68)),
+    url("./assets/one piece theme/feature reel_section_background.png") center / cover no-repeat;
+}
+
+.section-bg-enabled #contact {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.44), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.5)),
+    linear-gradient(rgba(0, 0, 0, 0.46), rgba(0, 0, 0, 0.58)),
+    url("./assets/one piece theme/contact_section_background.png") center / 100% 100% no-repeat;
+}
+
+@media (max-width: 767px) {
+  .section-bg-enabled #home {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.56)),
+      linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.58)),
+      url("./assets/one piece theme/hero_section_background.png") 82% top / cover no-repeat;
+  }
+
+  .section-bg-enabled #about {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.48)),
+      linear-gradient(rgba(17, 17, 17, 0.7), rgba(17, 17, 17, 0.78)),
+      url("./assets/one piece theme/about me_section_background.png") center top / cover no-repeat;
+  }
+
+  .section-bg-enabled #skills {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.48), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.52)),
+      linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.64)),
+      url("./assets/one piece theme/my skill_section_background.png") left top / cover no-repeat;
+  }
+
+  .section-bg-enabled #services {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.48)),
+      linear-gradient(rgba(17, 17, 17, 0.7), rgba(17, 17, 17, 0.78)),
+      url("./assets/one piece theme/service_section_background.png") center top / cover no-repeat;
+  }
+
+  .section-bg-enabled #projects {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.48), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.52)),
+      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.66)),
+      url("./assets/one piece theme/project_section_background.png") left top / cover no-repeat;
+  }
+
+  .section-bg-enabled #media {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.48)),
+      linear-gradient(rgba(17, 17, 17, 0.44), rgba(17, 17, 17, 0.62)),
+      url("./assets/one piece theme/feature reel_section_background.png") 65% top / cover no-repeat;
+  }
+
+  .section-bg-enabled #contact {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.52)),
+      linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.6)),
+      url("./assets/one piece theme/contact_section_background.png") 92% top / cover no-repeat;
+  }
+}
+
+.footer-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 32px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.08);
+  color: #d4af37;
+  cursor: pointer;
+  transition:
+    background-color 500ms ease,
+    border-color 500ms ease,
+    box-shadow 500ms ease;
+}
+
+.footer-theme-toggle:hover {
+  border-color: #d4af37;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.24);
+}
+
+.footer-theme-toggle__track {
+  position: relative;
+  width: 46px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.footer-theme-toggle__thumb {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 999px;
+  background: #d4af37;
+  color: #050505;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  transform: translateY(-50%);
+  transition:
+    transform 320ms ease,
+    background-color 320ms ease,
+    color 320ms ease;
+}
+
+.footer-theme-toggle__thumb svg {
+  width: 12px;
+  height: 12px;
+  stroke-width: 3;
+}
+
+.footer-theme-toggle[aria-pressed="true"] {
+  border-color: rgba(244, 191, 63, 0.95);
+  background: rgba(9, 67, 96, 0.9);
+  box-shadow: 0 0 26px rgba(244, 191, 63, 0.34);
+}
+
+.footer-theme-toggle[aria-pressed="true"] .footer-theme-toggle__thumb {
+  background: #f4bf3f;
+  color: #0a3146;
+  transform: translate(24px, -50%) rotate(360deg);
+}
+
 html {
   scroll-behavior: smooth;
 }
