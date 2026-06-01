@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { FiMessageCircle, FiSend, FiX, FiZap } from "react-icons/fi"
+import onePieceEpisodes from "../data/onePieceEpisodes"
 
 const starterMessages = [
   {
@@ -13,10 +14,302 @@ const quickPrompts = [
   "What can Joel build?",
   "Joel mail id?",
   "Show his projects",
+  "onepiece",
 ]
+
+const CHAT_TIMEOUT_MS = 4500
+const ONE_PIECE_WIKI_API = "https://onepiece.fandom.com/api.php"
+
+const resumeSummary =
+  "Joel Jebasingh J is based in Chennai, India. Phone: 8939386459. Email: joeljebasingh0@gmail.com. Portfolio: https://joelpotfolio1.netlify.app/. He is an aspiring Full-Stack Developer, Game Developer, and Creative Designer. Education: BCA Computer Applications from Mar Gregorios College of Arts and Science, Chennai, 2025, 60.25%; Higher Secondary from Daniel Thomas Matriculation HSS, Chennai, 2022, 52.33%; Secondary from Daniel Thomas Matriculation HSS, Chennai, 2020, 43.8%. Skills: HTML5, CSS, JavaScript, responsive design, Python, MySQL, MongoDB, Roblox Studio, Unreal Engine 5, Photoshop, Premiere Pro, After Effects, Blender 3D animation basics, and MS Office. Projects: responsive websites and UI practice projects, Roblox Obby game with checkpoints and UI systems, simulator-style game concept, UE5 FPS prototype, UE5 cinematic environment design, video editing, motion graphics, posters, and thumbnails. Strengths: fast learner, creativity, problem solving, and adaptability."
+
+const latestOnePieceEpisodeNumber = Math.max(...Object.keys(onePieceEpisodes).map(Number))
+const latestOnePieceEpisode = onePieceEpisodes[latestOnePieceEpisodeNumber]
+const latestOnePieceEpisodeReply =
+  `The latest One Piece anime episode I know is Episode ${latestOnePieceEpisodeNumber}, "${latestOnePieceEpisode.title}".` +
+  (latestOnePieceEpisode.releaseDate ? ` It released on ${latestOnePieceEpisode.releaseDate}.` : "")
+
+function getEpisodeNumber(question) {
+  const match = question.match(/\b(?:episode|ep)?\s*(\d{1,4})\b/)
+
+  return match ? Number(match[1]) : null
+}
+
+function normalizeEpisodeTitle(text = "") {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+}
+
+function findOnePieceEpisodeByTitle(question) {
+  const normalizedQuestion = normalizeEpisodeTitle(question)
+
+  if (!normalizedQuestion) return null
+
+  return Object.entries(onePieceEpisodes).find(([, episode]) => {
+    const normalizedTitle = normalizeEpisodeTitle(episode.title)
+
+    return normalizedTitle.length > 8 && normalizedQuestion.includes(normalizedTitle)
+  }) || null
+}
+
+function getEpisodeTopic(extract = "", fallbackTitle = "") {
+  const cleanExtract = extract.replace(/\s+/g, " ").trim()
+  const sentences = cleanExtract.split(/(?<=[.!?])\s+/).filter(Boolean)
+  const topicSentence =
+    sentences.find((sentence) => !sentence.includes("is the") && !sentence.includes(fallbackTitle)) ||
+    sentences[1] ||
+    sentences[0]
+
+  return topicSentence ? topicSentence.replace(/^This episode\s*/i, "This episode ") : "This episode is part of the One Piece anime story."
+}
+
+function getEpisodeTitle(extract = "", fallbackTitle = "") {
+  const cleanExtract = extract.replace(/\s+/g, " ").trim()
+  const quotedTitle = cleanExtract.match(/"([^"]+)"/)?.[1]
+
+  if (quotedTitle) return quotedTitle
+
+  const titleBeforeDescription = cleanExtract.match(/^(.+?)\s+is the\s+\d+(?:st|nd|rd|th)\s+episode/i)?.[1]
+
+  return titleBeforeDescription || fallbackTitle || "Title not found"
+}
+
+function formatOnePieceEpisodeReply(episodeNumber, episode) {
+  const topicLine = episode.topic ? ` Topic: ${episode.topic}` : ""
+  const releaseLine = episode.releaseDate ? ` It released on ${episode.releaseDate}.` : ""
+
+  return `One Piece Episode ${episodeNumber}: "${episode.title}".${topicLine}${releaseLine}`
+}
+
+async function fetchOnePieceEpisodeDetails(episodeNumber) {
+  const params = new URLSearchParams({
+    action: "query",
+    format: "json",
+    origin: "*",
+    titles: `Episode ${episodeNumber}`,
+    prop: "extracts|info",
+    exintro: "1",
+    explaintext: "1",
+    inprop: "url",
+    redirects: "1",
+  })
+
+  const response = await fetch(`${ONE_PIECE_WIKI_API}?${params}`)
+
+  if (!response.ok) return null
+
+  const data = await response.json()
+  const page = Object.values(data.query?.pages || {})[0]
+
+  if (!page?.extract || page.missing) return null
+
+  const title = getEpisodeTitle(page.extract)
+  const topic = getEpisodeTopic(page.extract, title)
+
+  return {
+    title,
+    topic,
+  }
+}
+
+function getOnePieceEpisodeReply(question, episodeDetails) {
+  const episodeNumber = getEpisodeNumber(question)
+
+  if (episodeNumber && episodeDetails) {
+    return formatOnePieceEpisodeReply(episodeNumber, episodeDetails)
+  }
+
+  if (episodeNumber && onePieceEpisodes[episodeNumber]) {
+    return formatOnePieceEpisodeReply(episodeNumber, onePieceEpisodes[episodeNumber])
+  }
+
+  if (episodeNumber) {
+    return `I could not find Episode ${episodeNumber}'s details right now. Try asking again in a moment, or ask about another One Piece episode number.`
+  }
+
+  const titleMatch = findOnePieceEpisodeByTitle(question)
+
+  if (titleMatch) {
+    const [matchedEpisodeNumber, matchedEpisode] = titleMatch
+
+    return formatOnePieceEpisodeReply(matchedEpisodeNumber, matchedEpisode)
+  }
+
+  return latestOnePieceEpisodeReply
+}
+
+function isOnePieceEpisodeQuestion(question) {
+  const asksEpisode =
+    question.includes("episode") ||
+    question.includes("ep ") ||
+    question.includes("on air") ||
+    question.includes("release") ||
+    question.includes("released") ||
+    question.includes("title") ||
+    question.includes("name") ||
+    /\b\d{1,4}\b/.test(question)
+
+  return asksEpisode && (
+    Boolean(findOnePieceEpisodeByTitle(question)) ||
+    question.includes("one piece") ||
+    question.includes("onepiece") ||
+    question.includes("anime") ||
+    question.includes("latest") ||
+    question.includes("current") ||
+    question.includes("new") ||
+    question.includes("on air") ||
+    /\b\d{1,4}\b/.test(question)
+  )
+}
+
+function isOnePieceQuestion(question) {
+  return isOnePieceEpisodeQuestion(question) || [
+    "one piece",
+    "onepiece",
+    "luffy",
+    "zoro",
+    "sanji",
+    "nami",
+    "usopp",
+    "chopper",
+    "robin",
+    "franky",
+    "brook",
+    "jinbe",
+    "straw hat",
+    "strawhat",
+    "grand line",
+    "devil fruit",
+    "pirate king",
+    "thousand sunny",
+    "going merry",
+    "shanks",
+    "kaido",
+    "big mom",
+    "blackbeard",
+    "ace",
+    "sabo",
+    "law",
+    "wano",
+  ].some((word) => question.includes(word))
+}
+
+function isLatestOnePieceEpisodeQuestion(question) {
+  const asksEpisode = question.includes("episode") || question.includes("ep")
+  const asksLatest = question.includes("latest") || question.includes("last") || question.includes("new") || question.includes("current") || question.includes("on air")
+
+  return asksEpisode && asksLatest && isOnePieceQuestion(question)
+}
+
+function getOnePieceReply(question) {
+  if (question === "onepiece" || question === "one piece") {
+    return "One Piece is a pirate adventure anime and manga about Monkey D. Luffy and the Straw Hat Pirates sailing for the legendary treasure called the One Piece. You can ask me anything about One Piece, like episodes, characters, crews, Devil Fruits, Haki, arcs, or ships."
+  }
+
+  if (isLatestOnePieceEpisodeQuestion(question) || isOnePieceEpisodeQuestion(question)) {
+    return getOnePieceEpisodeReply(question)
+  }
+
+  if (question.includes("luffy")) {
+    return "Monkey D. Luffy is the captain of the Straw Hat Pirates. His dream is to become the Pirate King."
+  }
+
+  if (question.includes("zoro")) {
+    return "Roronoa Zoro is the Straw Hat Pirates' swordsman. His dream is to become the world's greatest swordsman."
+  }
+
+  if (question.includes("sanji")) {
+    return "Sanji is the Straw Hat Pirates' cook. He is known for powerful kicks, sharp style, and his dream of finding the All Blue."
+  }
+
+  if (question.includes("nami")) {
+    return "Nami is the Straw Hat Pirates' navigator. Her dream is to draw a complete map of the world."
+  }
+
+  if (question.includes("usopp")) {
+    return "Usopp is the Straw Hat Pirates' sniper. He is known for creative tricks, brave moments, and his dream of becoming a brave warrior of the sea."
+  }
+
+  if (question.includes("chopper")) {
+    return "Tony Tony Chopper is the Straw Hat Pirates' doctor. He is a reindeer who ate the Human-Human Fruit."
+  }
+
+  if (question.includes("robin")) {
+    return "Nico Robin is the Straw Hat Pirates' archaeologist. She can read Poneglyphs and wants to uncover the true history."
+  }
+
+  if (question.includes("franky")) {
+    return "Franky is the Straw Hat Pirates' shipwright. He built the Thousand Sunny and dreams of seeing it sail around the world."
+  }
+
+  if (question.includes("brook")) {
+    return "Brook is the Straw Hat Pirates' musician. He is a living skeleton with the Revive-Revive Fruit power."
+  }
+
+  if (question.includes("jinbe")) {
+    return "Jinbe is the Straw Hat Pirates' helmsman. He is a fish-man master of Fish-Man Karate and a former Warlord of the Sea."
+  }
+
+  if (question.includes("devil fruit")) {
+    return "Devil Fruits are mysterious fruits in One Piece that give special powers, but the user loses the ability to swim."
+  }
+
+  if (question.includes("haki")) {
+    return "Haki is a spiritual power in One Piece. The main types are Observation Haki, Armament Haki, and Conqueror's Haki."
+  }
+
+  if (question.includes("grand line")) {
+    return "The Grand Line is the dangerous sea route where most of One Piece's biggest adventures happen."
+  }
+
+  if (question.includes("wano")) {
+    return "Wano Country is a samurai-themed land in One Piece and the setting of a major arc involving Kaido and the Kozuki clan."
+  }
+
+  if (question.includes("shanks")) {
+    return "Shanks is one of the Four Emperors and the pirate who inspired Luffy to become a pirate."
+  }
+
+  if (question.includes("blackbeard")) {
+    return "Blackbeard, also known as Marshall D. Teach, is one of the major pirate villains in One Piece."
+  }
+
+  if (question.includes("ace")) {
+    return "Portgas D. Ace is Luffy's sworn brother and a major emotional figure in One Piece."
+  }
+
+  if (question.includes("law")) {
+    return "Trafalgar Law is a pirate captain and doctor with the Op-Op Fruit power."
+  }
+
+  if (question.includes("thousand sunny")) {
+    return "The Thousand Sunny is the Straw Hat Pirates' main ship after the Going Merry. It was built by Franky."
+  }
+
+  if (question.includes("going merry")) {
+    return "The Going Merry was the Straw Hat Pirates' first ship and one of the most emotional parts of One Piece."
+  }
+
+  if (question.includes("straw hat") || question.includes("strawhat")) {
+    return "The Straw Hat Pirates are Luffy's crew. Their core dream is to sail the Grand Line and help Luffy become Pirate King."
+  }
+
+  if (question.includes("pirate king")) {
+    return "The Pirate King is the title given to the person who finds the One Piece and reaches the top of the pirate world."
+  }
+
+  return "One Piece is an adventure anime and manga about Monkey D. Luffy and the Straw Hat Pirates searching for the legendary treasure called the One Piece."
+}
 
 function getLocalReply(text) {
   const question = text.toLowerCase()
+
+  if (isOnePieceQuestion(question)) {
+    return getOnePieceReply(question)
+  }
+
   const asksContact = [
     "contact",
     "email",
@@ -33,8 +326,37 @@ function getLocalReply(text) {
     return "Sure. Joel's mail ID is joeljebasingh0@gmail.com. You can message him there for website work, video editing, 3D projects, or collaborations."
   }
 
+  if (question.includes("phone") || question.includes("number") || question.includes("mobile")) {
+    return "Joel's phone number on the resume is 8939386459, and his email is joeljebasingh0@gmail.com."
+  }
+
+  if (
+    (question.includes("10th") || question.includes("tenth") || question.includes("sslc")) &&
+    (question.includes("percentage") || question.includes("percent") || question.includes("%"))
+  ) {
+    return "Joel's 10th percentage is 43.8%."
+  }
+
+  if (
+    (question.includes("12th") || question.includes("twelfth") || question.includes("hsc") || question.includes("higher secondary")) &&
+    (question.includes("percentage") || question.includes("percent") || question.includes("%"))
+  ) {
+    return "Joel's 12th percentage is 52.33%."
+  }
+
+  if (
+    (question.includes("bca") || question.includes("college") || question.includes("degree")) &&
+    (question.includes("percentage") || question.includes("percent") || question.includes("%"))
+  ) {
+    return "Joel's BCA percentage is 60.25%."
+  }
+
+  if (question.includes("education") || question.includes("college") || question.includes("bca") || question.includes("percentage") || question.includes("school")) {
+    return "Joel studied BCA Computer Applications at Mar Gregorios College of Arts and Science, Chennai, graduating in 2025 with 60.25%. His 12th percentage is 52.33%, and his 10th percentage is 43.8% from Daniel Thomas Matriculation HSS."
+  }
+
   if (question.includes("project") || question.includes("work")) {
-    return "Joel has three main project areas here: cinematic video edits, a responsive e-commerce website, and 3D creative visuals. The Projects section has the links to view them."
+    return "Joel's resume projects include responsive websites, UI practice projects, a Roblox Obby with checkpoints and UI systems, a simulator-style game concept, UE5 FPS prototype, UE5 cinematic environment design, video edits, posters, thumbnails, and motion graphics."
   }
 
   if (question.includes("edit") || question.includes("video") || question.includes("reel")) {
@@ -42,11 +364,19 @@ function getLocalReply(text) {
   }
 
   if (question.includes("skill") || question.includes("build") || question.includes("developer") || question.includes("website")) {
-    return "Joel can build modern React websites and portfolio-style experiences. He also works with Node.js, MongoDB, frontend design, Premiere Pro, After Effects, and Blender."
+    return "Joel's skills include HTML5, CSS, JavaScript, responsive design, Python, MySQL, MongoDB, Roblox Studio, Unreal Engine 5, Photoshop, Premiere Pro, After Effects, Blender basics, MS Office, and React website work."
   }
 
   if (question.includes("resume") || question.includes("cv")) {
-    return "You can view or download Joel's resume from the buttons in the home section of this portfolio."
+    return resumeSummary
+  }
+
+  if (question.includes("strength") || question.includes("good at")) {
+    return "Joel's resume strengths are fast learning, creativity, problem solving, and adaptability."
+  }
+
+  if (question.includes("ai") || question.includes("prompt")) {
+    return "Joel is up to date with AI knowledge and knows how to use AI tools for ideas, research, content, coding help, and faster creative work."
   }
 
   if (question.includes("who") || question.includes("about")) {
@@ -93,7 +423,34 @@ function getSectionTarget(text) {
   return null
 }
 
-export default function ChatBot() {
+function getThemeCommand(text) {
+  const question = text.toLowerCase()
+  const asksTheme = question.includes("theme") || question.includes("background") || question.includes("bg")
+
+  if (!asksTheme) return null
+
+  if (
+    question.includes("one piece") ||
+    question.includes("onepiece") ||
+    question.includes("pirate") ||
+    question.includes("anime")
+  ) {
+    return "one-piece"
+  }
+
+  if (
+    question.includes("normal") ||
+    question.includes("default") ||
+    question.includes("portfolio") ||
+    question.includes("original")
+  ) {
+    return "normal"
+  }
+
+  return null
+}
+
+export default function ChatBot({ onThemeChange }) {
   const [isOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [chat, setChat] = useState(starterMessages)
@@ -111,6 +468,7 @@ export default function ChatBot() {
   const sendMessage = async (text = message) => {
     const cleanMessage = text.trim()
     const sectionTarget = getSectionTarget(cleanMessage)
+    const themeCommand = getThemeCommand(cleanMessage)
 
     if (!cleanMessage || loading) return
 
@@ -121,11 +479,61 @@ export default function ChatBot() {
 
     setChat((prev) => [...prev, userMessage])
     setMessage("")
+
+    if (themeCommand) {
+      onThemeChange?.(themeCommand === "one-piece")
+      setChat((prev) => [
+        ...prev,
+        {
+          role: "bot",
+          text:
+            themeCommand === "one-piece"
+              ? "Done. I changed the portfolio to the One Piece theme."
+              : "Done. I changed the portfolio back to the normal theme.",
+        },
+      ])
+      setIsOpen(false)
+      return
+    }
+
     setLoading(true)
 
+    const lowerMessage = cleanMessage.toLowerCase()
+    const episodeNumber = getEpisodeNumber(lowerMessage)
+
+    if (episodeNumber && isOnePieceEpisodeQuestion(lowerMessage)) {
+      try {
+        const episodeDetails = onePieceEpisodes[episodeNumber] || await fetchOnePieceEpisodeDetails(episodeNumber)
+
+        setChat((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            text: getOnePieceEpisodeReply(lowerMessage, episodeDetails),
+          },
+        ])
+      } catch {
+        setChat((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            text: getOnePieceEpisodeReply(lowerMessage),
+          },
+        ])
+      } finally {
+        setLoading(false)
+      }
+
+      return
+    }
+
     try {
+      const controller = new AbortController()
+      const timeoutId = window.setTimeout(() => controller.abort(), CHAT_TIMEOUT_MS)
+
       const res = await fetch(apiUrl, {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
         },
@@ -133,6 +541,8 @@ export default function ChatBot() {
           message: cleanMessage,
         }),
       })
+
+      window.clearTimeout(timeoutId)
 
       if (!res.ok) {
         throw new Error("Chat request failed")
@@ -244,14 +654,14 @@ export default function ChatBot() {
             </div>
 
             <div className="border-t border-white/10 bg-black/70 p-4">
-              <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+              <div className="mb-3 flex flex-wrap gap-2">
                 {quickPrompts.map((prompt) => (
                   <button
                     key={prompt}
                     type="button"
                     onClick={() => sendMessage(prompt)}
                     disabled={loading}
-                    className="shrink-0 rounded-full border border-[#D4AF37]/30 px-3 py-2 text-xs text-gray-300 transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-full border border-[#D4AF37]/30 px-3 py-2 text-xs text-gray-300 transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {prompt}
                   </button>
@@ -262,7 +672,7 @@ export default function ChatBot() {
                 <textarea
                   rows="1"
                   value={message}
-                  placeholder="Ask about Joel..."
+                  placeholder="Ask Joel or One Piece..."
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {

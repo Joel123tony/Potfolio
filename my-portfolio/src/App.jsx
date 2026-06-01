@@ -1,28 +1,241 @@
 import { useState, useEffect, useRef } from "react"
-import { FiMail, FiInstagram, FiBriefcase } from "react-icons/fi"
+import { FiAnchor, FiMail, FiInstagram, FiBriefcase, FiFilm, FiCode, FiBox, FiCpu, FiGlobe, FiMenu, FiX } from "react-icons/fi"
 import { motion } from "framer-motion"
 import ChatBot from "./components/ChatBot"
 
+const onePieceBackgroundUrls = [
+  new URL("./assets/one piece theme/hero_section_background.png", import.meta.url).href,
+  new URL("./assets/one piece theme/about me_section_background.png", import.meta.url).href,
+  new URL("./assets/one piece theme/my skill_section_background.png", import.meta.url).href,
+  new URL("./assets/one piece theme/service_section_background.png", import.meta.url).href,
+  new URL("./assets/one piece theme/project_section_background.png", import.meta.url).href,
+  new URL("./assets/one piece theme/feature reel_section_background.png", import.meta.url).href,
+  new URL("./assets/one piece theme/contact_section_background.png", import.meta.url).href,
+]
+
+function preloadImage(url, priority = "auto") {
+  const image = new Image()
+  image.decoding = "async"
+  image.fetchPriority = priority
+  image.src = url
+}
+
+function AnimatedStatNumber({ value, suffix = "", replayKey, duration = 1800, startDelay = 0 }) {
+  const [displayValue, setDisplayValue] = useState(() => {
+    if (typeof window === "undefined") return 0
+
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? value : 0
+  })
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    if (prefersReducedMotion) {
+      const reducedMotionTimer = window.setTimeout(() => setDisplayValue(value), 0)
+
+      return () => window.clearTimeout(reducedMotionTimer)
+    }
+
+    let animationFrame
+    let delayTimer
+    let resetTimer
+    let startedAt
+
+    resetTimer = window.setTimeout(() => setDisplayValue(0), 0)
+
+    const animate = (currentTime) => {
+      if (!startedAt) {
+        startedAt = currentTime
+      }
+
+      const progress = Math.min((currentTime - startedAt) / duration, 1)
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+      setDisplayValue(Math.round(value * easedProgress))
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate)
+      }
+    }
+
+    delayTimer = window.setTimeout(() => {
+      animationFrame = requestAnimationFrame(animate)
+    }, startDelay)
+
+    return () => {
+      window.clearTimeout(delayTimer)
+      window.clearTimeout(resetTimer)
+      cancelAnimationFrame(animationFrame)
+    }
+  }, [value, replayKey, duration, startDelay])
+
+  return (
+    <span>
+      {displayValue.toLocaleString("en-US")}
+      {suffix}
+    </span>
+  )
+}
+
+function TypewriterText({ text, className, replayKey }) {
+  const [typedText, setTypedText] = useState(() => {
+    if (typeof window === "undefined") return text
+
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? text : ""
+  })
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    if (prefersReducedMotion) {
+      const reducedMotionTimer = window.setTimeout(() => setTypedText(text), 0)
+
+      return () => window.clearTimeout(reducedMotionTimer)
+    }
+
+    let index = 0
+    const interval = window.setInterval(() => {
+      index += 1
+      setTypedText(text.slice(0, index))
+
+      if (index >= text.length) {
+        window.clearInterval(interval)
+      }
+    }, 55)
+    const resetTimer = window.setTimeout(() => setTypedText(""), 0)
+
+    return () => {
+      window.clearInterval(interval)
+      window.clearTimeout(resetTimer)
+    }
+  }, [text, replayKey])
+
+  const isComplete = typedText.length >= text.length
+
+  return (
+    <p className={`typewriter-copy ${className}`} aria-label={text}>
+      <span aria-hidden="true">
+        {typedText || "\u00a0"}
+        {!isComplete && <span className="typewriter-caret" aria-hidden="true" />}
+        {isComplete && <span className="typewriter-caret typewriter-caret--idle" aria-hidden="true" />}
+      </span>
+    </p>
+  )
+}
+
 function App() {
 
+  const showcaseVideos = [
+      {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1778408003/ordinary_person_gojo_lzietp.webm",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599114/fornite_montag00_dl1j2w.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599119/Naa_Gali__anime_edit_sitebe.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599116/jennei_c4pknc.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599426/atlantis_1_nlnpmv.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599560/3d_hall_z9hz2b.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599557/3d_render_mwitdz.mp4",
+      orientation: "landscape",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599559/Ishowspped_rqxwzb.mp4",
+      orientation: "portrait",
+    },
+    {
+      src: "https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1779599559/Andrew_emma_ls17ab.mp4",
+      orientation: "portrait",
+    },
+  ]
+
+  const [showcaseVideo] = useState(() => {
+    return showcaseVideos[Math.floor(Math.random() * showcaseVideos.length)]
+  })
   const [isMuted, setIsMuted] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [translateOpen, setTranslateOpen] = useState(false)
+  const [selectedLanguage, setSelectedLanguage] = useState("EN")
+  const [themeToggleOn, setThemeToggleOn] = useState(false)
   const videoRef = useRef(null)
   const cursorRef = useRef(null)
+
+  useEffect(() => {
+    preloadImage(onePieceBackgroundUrls[0], "high")
+
+    const preloadRemainingImages = () => {
+      onePieceBackgroundUrls.slice(1).forEach((url) => preloadImage(url))
+    }
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(preloadRemainingImages, { timeout: 1800 })
+
+      return () => window.cancelIdleCallback(idleId)
+    }
+
+    const timeoutId = window.setTimeout(preloadRemainingImages, 600)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [])
 
   const navItems = [
     "home",
     "about",
     "skills",
+    "services",
     "projects",
     "media",
     "contact"
+  ]
+
+  const onePieceLabels = {
+    portfolioKicker: themeToggleOn ? "Captain's Portfolio" : "Personal Portfolio",
+    skills: themeToggleOn ? "Grand Line Skills" : "Skills",
+    services: themeToggleOn ? "Pirate Services" : "Services",
+    projects: themeToggleOn ? "Adventures" : "Projects",
+    resume: themeToggleOn ? "Pirate Logbook" : "Resume",
+    contact: themeToggleOn ? "Den Den Mushi" : "Contact",
+    featuredReel: themeToggleOn ? "Captain's Showcase" : "Featured Reel",
+  }
+
+  const navLabels = {
+    skills: onePieceLabels.skills,
+    services: onePieceLabels.services,
+    projects: onePieceLabels.projects,
+    contact: onePieceLabels.contact,
+  }
+
+  const languages = [
+    { code: "en", label: "EN", name: "English" },
+    { code: "ta", label: "TA", name: "Tamil" },
+    { code: "hi", label: "HI", name: "Hindi" },
+    { code: "ml", label: "ML", name: "Malayalam" },
+    { code: "te", label: "TE", name: "Telugu" },
+    { code: "fr", label: "FR", name: "French" },
+    { code: "es", label: "ES", name: "Spanish" },
   ]
 
   useEffect(() => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+
+        if (!videoRef.current) return
 
         if (entry.isIntersecting) {
           videoRef.current.play()
@@ -62,9 +275,66 @@ function App() {
   return () => window.removeEventListener("mousemove", moveCursor)
 }, [])
 
+  useEffect(() => {
+    window.googleTranslateElementInit = () => {
+      if (!window.google?.translate) return
+
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          includedLanguages: "en,ta,hi,ml,te,fr,es",
+          autoDisplay: false,
+        },
+        "google_translate_element"
+      )
+    }
+
+    if (!document.getElementById("google-translate-script")) {
+      const script = document.createElement("script")
+      script.id = "google-translate-script"
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+      document.body.appendChild(script)
+    }
+  }, [])
+
+  const translatePage = (language) => {
+    setSelectedLanguage(language.label)
+    setTranslateOpen(false)
+
+    const applyTranslation = () => {
+      const select = document.querySelector(".goog-te-combo")
+
+      if (!select) return false
+
+      select.value = language.code
+      select.dispatchEvent(new Event("change"))
+      return true
+    }
+
+    if (!applyTranslation()) {
+      window.setTimeout(applyTranslation, 700)
+    }
+  }
+
+  const handleThemeToggle = () => {
+    setThemeToggleOn((current) => !current)
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    })
+  }
+
+  const setThemeMode = (enabled) => {
+    setThemeToggleOn(enabled)
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    })
+  }
+
   return (
 
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className={`min-h-screen bg-black text-white overflow-x-hidden ${themeToggleOn ? "section-bg-enabled" : ""}`}>
 
 {/* Navbar */}
 <nav className="fixed top-0 left-0 w-full z-50 border-b border-gray-800 bg-black/70 backdrop-blur-xl">
@@ -76,8 +346,10 @@ function App() {
       JOEL
     </h1>
 
-    {/* Desktop Menu */}
-    <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
+    <div className="hidden md:flex items-center gap-4">
+
+      {/* Desktop Menu */}
+      <ul className="flex items-center gap-5 text-sm font-medium">
 
       {navItems.map((item) => (
 
@@ -87,32 +359,86 @@ function App() {
             href={`#${item}`}
             className="relative uppercase tracking-[2px] text-gray-300 hover:text-[#D4AF37] transition duration-300 after:absolute after:left-0 after:-bottom-2 after:h-[2px] after:w-0 after:bg-[#D4AF37] after:transition-all after:duration-300 hover:after:w-full"
           >
-            {item}
+            {navLabels[item] || item}
           </a>
 
         </li>
 
       ))}
 
-    </ul>
+      </ul>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setTranslateOpen((current) => !current)}
+          className="flex h-10 items-center gap-2 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-3 text-[#D4AF37] transition duration-300 hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black"
+          aria-label="Translate page"
+          aria-expanded={translateOpen}
+        >
+          <FiGlobe className="text-lg" aria-hidden="true" />
+          <span className="text-xs font-bold">{selectedLanguage}</span>
+        </button>
+
+        {translateOpen && (
+          <div className="absolute right-0 top-12 w-44 overflow-hidden rounded-2xl border border-gray-800 bg-black/95 shadow-[0_0_35px_rgba(212,175,55,0.2)] backdrop-blur-xl">
+            {languages.map((language) => (
+              <button
+                key={language.code}
+                type="button"
+                onClick={() => translatePage(language)}
+                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-300 transition duration-300 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
+              >
+                <span>{language.name}</span>
+                <span className="text-xs font-bold text-[#D4AF37]">{language.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+    </div>
+
+    <div className="flex items-center gap-3 md:hidden">
+      <button
+        type="button"
+        onClick={() => setTranslateOpen((current) => !current)}
+        className="grid h-10 w-10 place-items-center rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37]"
+        aria-label="Translate page"
+        aria-expanded={translateOpen}
+      >
+        <FiGlobe className="text-lg" aria-hidden="true" />
+      </button>
 
     {/* Mobile Button */}
     <button
       onClick={() => setMenuOpen(!menuOpen)}
-      className="md:hidden flex flex-col gap-1.5 group"
+      className="grid h-10 w-10 place-items-center rounded-full border border-gray-800 text-white transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
       aria-label="Toggle navigation menu"
       aria-expanded={menuOpen}
     >
-
-      <span className={`w-7 h-[2px] bg-white transition duration-300 ${menuOpen ? "rotate-45 translate-y-[8px]" : ""}`}></span>
-
-      <span className={`w-7 h-[2px] bg-white transition duration-300 ${menuOpen ? "opacity-0" : ""}`}></span>
-
-      <span className={`w-7 h-[2px] bg-white transition duration-300 ${menuOpen ? "-rotate-45 -translate-y-[8px]" : ""}`}></span>
+      {menuOpen ? <FiX className="text-xl" aria-hidden="true" /> : <FiMenu className="text-xl" aria-hidden="true" />}
 
     </button>
+    </div>
 
   </div>
+
+  {translateOpen && (
+    <div className="absolute right-6 top-20 z-50 w-44 overflow-hidden rounded-2xl border border-gray-800 bg-black/95 shadow-[0_0_35px_rgba(212,175,55,0.2)] backdrop-blur-xl md:hidden">
+      {languages.map((language) => (
+        <button
+          key={language.code}
+          type="button"
+          onClick={() => translatePage(language)}
+          className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-300 transition duration-300 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
+        >
+          <span>{language.name}</span>
+          <span className="text-xs font-bold text-[#D4AF37]">{language.label}</span>
+        </button>
+      ))}
+    </div>
+  )}
 
   {/* Mobile Menu */}
   <div
@@ -128,7 +454,7 @@ function App() {
             onClick={() => setMenuOpen(false)}
             className="block py-4 uppercase tracking-[2px] text-gray-300 hover:text-[#D4AF37] transition duration-300"
           >
-            {item}
+            {navLabels[item] || item}
           </a>
         </li>
       ))}
@@ -136,15 +462,17 @@ function App() {
   </div>
 
 </nav>      
+<div id="google_translate_element" className="translate-widget"></div>
+
 <section
         id="home"
-        className="relative flex flex-col items-center justify-center text-center py-32 px-6 overflow-hidden"
+        className="relative flex flex-col items-center justify-center text-center py-32 px-6 overflow-hidden border-b border-gray-900"
       >
         {/* Animated Background Glow */}
 <div className="absolute w-[600px] h-[600px] bg-[#D4AF37]/10 blur-[140px] rounded-full animate-pulse"></div>
 
         <p className="text-[#D4AF37] uppercase tracking-[5px] mb-4">
-          Personal Portfolio
+          {onePieceLabels.portfolioKicker}
         </p>
 
         <h1 className="text-5xl md:text-7xl font-bold leading-tight">
@@ -153,10 +481,25 @@ function App() {
           & Video Editor
         </h1>
 
-        <p className="text-gray-400 mt-6 max-w-2xl text-lg">
-          Building modern edits, modern websites and
-          creative digital experiences.
-        </p>
+        {themeToggleOn && (
+          <div className="mt-5 text-[#D4AF37] uppercase tracking-[3px] text-sm md:text-base font-bold">
+            Bounty:{" "}
+            <AnimatedStatNumber
+              key="one-piece-bounty-count"
+              value={1247500}
+              replayKey={themeToggleOn}
+              duration={2600}
+              startDelay={180}
+            />{" "}
+            Berries
+          </div>
+        )}
+
+        <TypewriterText
+          text="Building modern edits, modern websites and creative digital experiences."
+          className="text-gray-400 mt-6 max-w-2xl text-lg"
+          replayKey={themeToggleOn}
+        />
 
 <div className="relative z-20 mt-10 flex flex-col sm:flex-row gap-4 pointer-events-auto">
 
@@ -167,7 +510,7 @@ function App() {
     rel="noopener noreferrer"
     className="inline-block bg-gray-800 text-white px-6 py-3 rounded-full font-semibold text-center hover:scale-105 transition duration-300"
   >
-    View Resume
+    View {onePieceLabels.resume}
   </a>
 
   {/* Download Resume */}
@@ -176,7 +519,7 @@ function App() {
     download
     className="inline-block bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold text-center hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
   >
-    Download Resume
+    Download {onePieceLabels.resume}
   </a>
 
 </div>
@@ -185,7 +528,7 @@ function App() {
       {/* About */}
       <section
         id="about"
-        className="px-8 py-24 bg-[#111111]"
+        className="px-8 py-24 bg-[#111111] border-b border-gray-800"
       >
 
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
@@ -214,9 +557,9 @@ function App() {
 
           <div className="grid grid-cols-2 gap-6">
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
-                2+
+                <AnimatedStatNumber value={2} suffix="+" />
               </h3>
 
               <p className="text-gray-400">
@@ -224,9 +567,9 @@ function App() {
               </p>
             </div>
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
-                10+
+                <AnimatedStatNumber value={10} suffix="+" />
               </h3>
 
               <p className="text-gray-400">
@@ -234,9 +577,9 @@ function App() {
               </p>
             </div>
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
-                6+
+                <AnimatedStatNumber value={6} suffix="+" />
               </h3>
 
               <p className="text-gray-400">
@@ -244,7 +587,7 @@ function App() {
               </p>
             </div>
 
-            <div className="bg-black border border-gray-800 p-6 rounded-2xl">
+            <div className="bg-black border border-gray-800 p-6 rounded-2xl hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
               <h3 className="text-[#D4AF37] text-3xl font-bold mb-2">
                 ∞
               </h3>
@@ -263,7 +606,7 @@ function App() {
       {/* Skills */}
       <section
         id="skills"
-        className="px-8 py-24 bg-black"
+        className="px-8 py-24 bg-black border-b border-gray-800"
       >
 
         <motion.div
@@ -276,7 +619,7 @@ function App() {
           <div className="text-center mb-16">
 
             <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-              My Skills
+              {onePieceLabels.skills}
             </p>
 
             <h2 className="text-4xl font-bold">
@@ -350,10 +693,90 @@ function App() {
 
       </section>
 
+{/* Services Section */}
+<section
+  id="services"
+  className="px-8 py-24 bg-[#111111] border-b border-gray-800"
+>
+
+  <motion.div
+    className="max-w-6xl mx-auto"
+    initial={{ opacity: 0, y: 80 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+    viewport={{ once: true }}
+  >
+
+    <div className="text-center mb-16">
+
+      <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
+        {onePieceLabels.services}
+      </p>
+
+      <h2 className="text-4xl font-bold">
+        What I Can Create
+      </h2>
+
+    </div>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      {[
+        {
+          icon: FiFilm,
+          title: "Video Editing",
+          desc: "Cinematic reels, smooth transitions, social edits and storytelling cuts."
+        },
+        {
+          icon: FiCode,
+          title: "Web Development",
+          desc: "Responsive portfolio, business and product websites built with modern tools."
+        },
+        {
+          icon: FiBox,
+          title: "3D Visuals",
+          desc: "Creative 3D renders, product-style visuals and motion-ready concepts."
+        },
+        {
+          icon: FiCpu,
+          title: "AI Prompting",
+          desc: "Up to date with AI knowledge and skilled at using AI tools for smart, creative and faster work."
+        }
+      ].map((service, index) => {
+        const Icon = service.icon
+
+        return (
+          <div
+            key={index}
+            className="bg-black border border-gray-800 rounded-2xl p-7 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,0.28)] hover:-translate-y-2 transition duration-500"
+          >
+
+            <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-6">
+              <Icon className="text-3xl text-[#D4AF37]" />
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">
+              {service.title}
+            </h3>
+
+            <p className="text-gray-400 leading-relaxed">
+              {service.desc}
+            </p>
+
+          </div>
+        )
+      })}
+
+    </div>
+
+  </motion.div>
+
+</section>
+
 {/* Projects Section */}
 <section
   id="projects"
-  className="px-8 py-24 bg-[#111111]"
+  className="px-8 py-24 bg-black border-b border-gray-800"
 >
 
   <motion.div
@@ -368,7 +791,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Projects
+        {onePieceLabels.projects}
       </p>
 
       <h2 className="text-4xl font-bold">
@@ -381,7 +804,7 @@ function App() {
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 
       {/* Card 1 */}
-      <div className="group bg-black border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
+      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
 
         <div className="overflow-hidden">
 
@@ -421,7 +844,7 @@ function App() {
       </div>
 
       {/* Card 2 */}
-      <div className="group bg-black border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
+      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
 
         <div className="overflow-hidden">
 
@@ -461,7 +884,7 @@ function App() {
       </div>
 
       {/* Card 3 */}
-      <div className="group bg-black border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
+      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
 
         <div className="overflow-hidden">
 
@@ -507,14 +930,14 @@ function App() {
 </section>
 
 {/* Showreel */}
-<section id="media" className="px-8 py-24 bg-[#111111]">
+<section id="media" className="px-8 py-24 bg-[#111111] border-b border-gray-800">
 
   <div className="max-w-6xl mx-auto">
 
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Featured Reel
+        {onePieceLabels.featuredReel}
       </p>
 
       <h2 className="text-4xl font-bold mb-6">
@@ -523,11 +946,20 @@ function App() {
     </div>
 
     {/* Video Container */}
-    <div className="relative rounded-3xl overflow-hidden border border-gray-800 shadow-2xl h-[300px] md:h-[600px]">
+    <div className={`relative overflow-hidden rounded-3xl border border-gray-800 shadow-2xl ${
+      showcaseVideo.orientation === "portrait"
+        ? "flex h-[560px] max-h-[76vh] items-center justify-center bg-black md:h-[680px]"
+        : "h-[300px] bg-black md:h-[600px]"
+    }`}>
 
       <video
+  key={showcaseVideo.src}
   ref={videoRef}
-  className="w-full h-full object-cover"
+  className={
+    showcaseVideo.orientation === "portrait"
+      ? "h-full max-h-full w-auto max-w-full object-contain shadow-[0_0_60px_rgba(212,175,55,0.18)]"
+      : "h-full w-full object-cover"
+  }
   autoPlay
   loop
   playsInline
@@ -535,7 +967,7 @@ function App() {
   preload="metadata"
 >
   <source
-    src="https://res.cloudinary.com/dtdqsceur/video/upload/q_auto/f_auto/v1778408003/ordinary_person_gojo_lzietp.mp4"
+    src={showcaseVideo.src}
     type="video/mp4"
   />
 </video>
@@ -573,7 +1005,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Contact
+        {onePieceLabels.contact}
       </p>
 
       <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
@@ -685,15 +1117,15 @@ function App() {
             </a>
 
             <a href="#skills" className="hover:text-[#D4AF37]">
-              Skills
+              {onePieceLabels.skills}
             </a>
 
             <a href="#projects" className="hover:text-[#D4AF37]">
-              Projects
+              {onePieceLabels.projects}
             </a>
 
             <a href="#contact" className="hover:text-[#D4AF37]">
-              Contact
+              {onePieceLabels.contact}
             </a>
 
           </div>
@@ -715,6 +1147,20 @@ function App() {
               Email
             </a>
 
+            <button
+              type="button"
+              className="footer-theme-toggle"
+              onClick={handleThemeToggle}
+              aria-label="Toggle theme"
+              aria-pressed={themeToggleOn}
+            >
+              <span className="footer-theme-toggle__track" aria-hidden="true">
+                <span className="footer-theme-toggle__thumb">
+                  {themeToggleOn ? <FiAnchor /> : "J"}
+                </span>
+              </span>
+            </button>
+
           </div>
 
         </div>
@@ -729,7 +1175,7 @@ function App() {
 
       </footer>
 
-      <ChatBot />
+      <ChatBot onThemeChange={setThemeMode} />
 
     </div>
 
