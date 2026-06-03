@@ -119,9 +119,11 @@ body {
 .footer-theme-toggle {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 58px;
-  height: 32px;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 150px;
+  min-height: 36px;
+  padding: 4px 12px 4px 5px;
   border: 1px solid rgba(212, 175, 55, 0.5);
   border-radius: 999px;
   background: rgba(212, 175, 55, 0.08);
@@ -139,6 +141,7 @@ body {
 }
 
 .footer-theme-toggle__track {
+  flex: 0 0 auto;
   position: relative;
   width: 46px;
   height: 22px;
@@ -171,6 +174,14 @@ body {
   width: 12px;
   height: 12px;
   stroke-width: 3;
+}
+
+.footer-theme-toggle__label {
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
 .footer-theme-toggle[aria-pressed="true"] {

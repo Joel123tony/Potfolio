@@ -204,8 +204,9 @@ function App() {
   ]
 
   const onePieceLabels = {
+    themeButton: themeToggleOn ? "One Piece Theme" : "Normal",
     portfolioKicker: themeToggleOn ? "Captain's Portfolio" : "Personal Portfolio",
-    skills: themeToggleOn ? "Grand Line Skills" : "Skills",
+    skills: themeToggleOn ? "Crew Skills" : "My Skills",
     services: themeToggleOn ? "Pirate Services" : "Services",
     projects: themeToggleOn ? "Adventures" : "Projects",
     resume: themeToggleOn ? "Pirate Logbook" : "Resume",
@@ -1158,6 +1159,9 @@ function App() {
                 <span className="footer-theme-toggle__thumb">
                   {themeToggleOn ? <FiAnchor /> : "J"}
                 </span>
+              </span>
+              <span className="footer-theme-toggle__label">
+                {onePieceLabels.themeButton}
               </span>
             </button>
 
