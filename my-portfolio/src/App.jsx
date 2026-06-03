@@ -206,7 +206,7 @@ function App() {
   const onePieceLabels = {
     themeButton: themeToggleOn ? "One Piece Theme" : "Normal",
     portfolioKicker: themeToggleOn ? "Captain's Portfolio" : "Personal Portfolio",
-    skills: themeToggleOn ? "Crew Skills" : "My Skills",
+    skills: themeToggleOn ? "Pirate Skills" : "My Skills",
     services: themeToggleOn ? "Pirate Services" : "Services",
     projects: themeToggleOn ? "Adventures" : "Projects",
     resume: themeToggleOn ? "Pirate Logbook" : "Resume",
