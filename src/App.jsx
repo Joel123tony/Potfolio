@@ -107,6 +107,25 @@ function App() {
     "contact"
   ]
 
+  const onePieceLabels = {
+    themeButton: themeToggleOn ? "One Piece Theme" : "Normal",
+    portfolioKicker: themeToggleOn ? "Captain's Portfolio" : "Personal Portfolio",
+    skills: themeToggleOn ? "Crew Skills" : "My Skills",
+    services: themeToggleOn ? "Pirate Services" : "Services",
+    projects: themeToggleOn ? "Adventures" : "Projects",
+    resume: themeToggleOn ? "Pirate Logbook" : "Resume",
+    contact: themeToggleOn ? "Den Den Mushi" : "Contact",
+    featuredReel: themeToggleOn ? "Captain's Showcase" : "Featured Reel",
+  }
+
+  const navLabels = {
+    skills: onePieceLabels.skills,
+    services: onePieceLabels.services,
+    projects: onePieceLabels.projects,
+    media: onePieceLabels.featuredReel,
+    contact: onePieceLabels.contact,
+  }
+
   const languages = [
     { code: "en", label: "EN", name: "English" },
     { code: "ta", label: "TA", name: "Tamil" },
@@ -246,7 +265,7 @@ function App() {
             href={`#${item}`}
             className="relative uppercase tracking-[2px] text-gray-300 hover:text-[#D4AF37] transition duration-300 after:absolute after:left-0 after:-bottom-2 after:h-[2px] after:w-0 after:bg-[#D4AF37] after:transition-all after:duration-300 hover:after:w-full"
           >
-            {item}
+            {navLabels[item] || item}
           </a>
 
         </li>
@@ -341,7 +360,7 @@ function App() {
             onClick={() => setMenuOpen(false)}
             className="block py-4 uppercase tracking-[2px] text-gray-300 hover:text-[#D4AF37] transition duration-300"
           >
-            {item}
+            {navLabels[item] || item}
           </a>
         </li>
       ))}
@@ -359,7 +378,7 @@ function App() {
 <div className="absolute w-[600px] h-[600px] bg-[#D4AF37]/10 blur-[140px] rounded-full animate-pulse"></div>
 
         <p className="text-[#D4AF37] uppercase tracking-[5px] mb-4">
-          Personal Portfolio
+          {onePieceLabels.portfolioKicker}
         </p>
 
         <h1 className="text-5xl md:text-7xl font-bold leading-tight">
@@ -382,7 +401,7 @@ function App() {
     rel="noopener noreferrer"
     className="inline-block bg-gray-800 text-white px-6 py-3 rounded-full font-semibold text-center hover:scale-105 transition duration-300"
   >
-    View Resume
+    View {onePieceLabels.resume}
   </a>
 
   {/* Download Resume */}
@@ -391,7 +410,7 @@ function App() {
     download
     className="inline-block bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold text-center hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
   >
-    Download Resume
+    Download {onePieceLabels.resume}
   </a>
 
 </div>
@@ -491,7 +510,7 @@ function App() {
           <div className="text-center mb-16">
 
             <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-              My Skills
+              {onePieceLabels.skills}
             </p>
 
             <h2 className="text-4xl font-bold">
@@ -582,7 +601,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Services
+        {onePieceLabels.services}
       </p>
 
       <h2 className="text-4xl font-bold">
@@ -663,7 +682,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Projects
+        {onePieceLabels.projects}
       </p>
 
       <h2 className="text-4xl font-bold">
@@ -809,7 +828,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Featured Reel
+        {onePieceLabels.featuredReel}
       </p>
 
       <h2 className="text-4xl font-bold mb-6">
@@ -877,7 +896,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        Contact
+        {onePieceLabels.contact}
       </p>
 
       <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
@@ -989,15 +1008,15 @@ function App() {
             </a>
 
             <a href="#skills" className="hover:text-[#D4AF37]">
-              Skills
+              {onePieceLabels.skills}
             </a>
 
             <a href="#projects" className="hover:text-[#D4AF37]">
-              Projects
+              {onePieceLabels.projects}
             </a>
 
             <a href="#contact" className="hover:text-[#D4AF37]">
-              Contact
+              {onePieceLabels.contact}
             </a>
 
           </div>
@@ -1030,6 +1049,9 @@ function App() {
                 <span className="footer-theme-toggle__thumb">
                   {themeToggleOn ? <FiAnchor /> : "J"}
                 </span>
+              </span>
+              <span className="footer-theme-toggle__label">
+                {onePieceLabels.themeButton}
               </span>
             </button>
 
