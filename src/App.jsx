@@ -2,6 +2,19 @@ import { useState, useEffect, useRef } from "react"
 import { FiAnchor, FiMail, FiInstagram, FiBriefcase, FiFilm, FiCode, FiBox, FiCpu, FiGlobe, FiMenu, FiX } from "react-icons/fi"
 import { motion } from "framer-motion"
 import ChatBot from "./components/ChatBot"
+import afterEffectsLogo from "./assets/one piece theme/after-effects.png"
+import blenderLogo from "./assets/one piece theme/Blender-Logo-PNG-File.png"
+import creativeProjectsLogo from "./assets/one piece theme/creative projects_logo.png"
+import creativeSkillsLogo from "./assets/one piece theme/creative skills_logo.png"
+import devilFruitLogo from "./assets/one piece theme/devil_fruit.png"
+import editingToolLogo from "./assets/one piece theme/editing tool_logo.png"
+import mongoLogo from "./assets/one piece theme/Mongodb-PNG-Pic.png"
+import msOfficeLogo from "./assets/one piece theme/MS_office.png"
+import nodeLogo from "./assets/one piece theme/node js.png"
+import premiereLogo from "./assets/one piece theme/premiere-pro.png"
+import reactLogo from "./assets/one piece theme/reactjs.png"
+import robloxLogo from "./assets/one piece theme/roblox-studio.png"
+import serviceVideoLogo from "./assets/one piece theme/video editing _logo_service card.png"
 
 function AnimatedStatNumber({ value, suffix = "" }) {
   const [displayValue, setDisplayValue] = useState(() => {
@@ -107,25 +120,6 @@ function App() {
     "contact"
   ]
 
-  const onePieceLabels = {
-    themeButton: themeToggleOn ? "One Piece Theme" : "Normal",
-    portfolioKicker: themeToggleOn ? "Captain's Portfolio" : "Personal Portfolio",
-    skills: themeToggleOn ? "Crew Skills" : "My Skills",
-    services: themeToggleOn ? "Pirate Services" : "Services",
-    projects: themeToggleOn ? "Adventures" : "Projects",
-    resume: themeToggleOn ? "Pirate Logbook" : "Resume",
-    contact: themeToggleOn ? "Den Den Mushi" : "Contact",
-    featuredReel: themeToggleOn ? "Captain's Showcase" : "Featured Reel",
-  }
-
-  const navLabels = {
-    skills: onePieceLabels.skills,
-    services: onePieceLabels.services,
-    projects: onePieceLabels.projects,
-    media: onePieceLabels.featuredReel,
-    contact: onePieceLabels.contact,
-  }
-
   const languages = [
     { code: "en", label: "EN", name: "English" },
     { code: "ta", label: "TA", name: "Tamil" },
@@ -134,6 +128,108 @@ function App() {
     { code: "te", label: "TE", name: "Telugu" },
     { code: "fr", label: "FR", name: "French" },
     { code: "es", label: "ES", name: "Spanish" },
+  ]
+
+  const skills = [
+    {
+      title: "Premiere Pro",
+      desc: "Professional video editing and storytelling.",
+      themeLogo: premiereLogo,
+    },
+    {
+      title: "After Effects",
+      desc: "Motion graphics and visual effects.",
+      themeLogo: afterEffectsLogo,
+    },
+    {
+      title: "React",
+      desc: "Modern responsive frontend applications.",
+      themeLogo: reactLogo,
+    },
+    {
+      title: "Node.js",
+      desc: "Backend development and APIs.",
+      themeLogo: nodeLogo,
+    },
+    {
+      title: "MongoDB",
+      desc: "Database management and integration.",
+      themeLogo: mongoLogo,
+    },
+    {
+      title: "OBS Studio",
+      desc: "Live streaming and production setup.",
+      themeLogo: devilFruitLogo,
+    },
+    {
+      title: "Blender",
+      desc: "Creating 3D animations and renders.",
+      themeLogo: blenderLogo,
+    },
+    {
+      title: "Roblox Studio",
+      desc: "Game development and scripting.",
+      themeLogo: robloxLogo,
+    },
+    {
+      title: "MS Office",
+      desc: "Word, PowerPoint and Excel experience.",
+      themeLogo: msOfficeLogo,
+    },
+  ]
+
+  const services = [
+    {
+      icon: FiFilm,
+      title: "Video Editing",
+      desc: "Cinematic reels, smooth transitions, social edits and storytelling cuts.",
+      themeLogo: serviceVideoLogo,
+    },
+    {
+      icon: FiCode,
+      title: "Web Development",
+      desc: "Responsive portfolio, business and product websites built with modern tools.",
+      themeLogo: creativeSkillsLogo,
+    },
+    {
+      icon: FiBox,
+      title: "3D Visuals",
+      desc: "Creative 3D renders, product-style visuals and motion-ready concepts.",
+      themeLogo: creativeProjectsLogo,
+    },
+    {
+      icon: FiCpu,
+      title: "AI Prompting",
+      desc: "Up to date with AI knowledge and skilled at using AI tools for smart, creative and faster work.",
+      themeLogo: devilFruitLogo,
+    },
+  ]
+
+  const projects = [
+    {
+      category: "Video Editing",
+      title: "Video Edit",
+      desc: "Cinematic storytelling with smooth transitions.",
+      href: "https://drive.google.com/drive/folders/1efMW_BAGA_4nwJQeFEJI-fwzmNYYeoJb?usp=drive_link",
+      image: "/images/edit_logo.png",
+      themeImage: editingToolLogo,
+    },
+    {
+      category: "Web Development",
+      title: "E-commerce Website",
+      desc: "Responsive project built using MongoDB and Node.js.",
+      href: "https://neuraproject.netlify.app/",
+      image: "/images/web_logo.png",
+      themeImage: creativeSkillsLogo,
+    },
+    {
+      category: "3D Design",
+      title: "3D Creative Project",
+      desc: "3D visuals and cinematic renders.",
+      href: "https://drive.google.com/drive/folders/1g8lWP0LlUI2xz9_5PFhxM7VJzFsM-JJf?usp=sharing",
+      image: "/images/3d_logo.png",
+      themeImage: creativeProjectsLogo,
+    },
   ]
 
   useEffect(() => {
@@ -265,7 +361,7 @@ function App() {
             href={`#${item}`}
             className="relative uppercase tracking-[2px] text-gray-300 hover:text-[#D4AF37] transition duration-300 after:absolute after:left-0 after:-bottom-2 after:h-[2px] after:w-0 after:bg-[#D4AF37] after:transition-all after:duration-300 hover:after:w-full"
           >
-            {navLabels[item] || item}
+            {item}
           </a>
 
         </li>
@@ -360,7 +456,7 @@ function App() {
             onClick={() => setMenuOpen(false)}
             className="block py-4 uppercase tracking-[2px] text-gray-300 hover:text-[#D4AF37] transition duration-300"
           >
-            {navLabels[item] || item}
+            {item}
           </a>
         </li>
       ))}
@@ -378,7 +474,7 @@ function App() {
 <div className="absolute w-[600px] h-[600px] bg-[#D4AF37]/10 blur-[140px] rounded-full animate-pulse"></div>
 
         <p className="text-[#D4AF37] uppercase tracking-[5px] mb-4">
-          {onePieceLabels.portfolioKicker}
+          Personal Portfolio
         </p>
 
         <h1 className="text-5xl md:text-7xl font-bold leading-tight">
@@ -401,7 +497,7 @@ function App() {
     rel="noopener noreferrer"
     className="inline-block bg-gray-800 text-white px-6 py-3 rounded-full font-semibold text-center hover:scale-105 transition duration-300"
   >
-    View {onePieceLabels.resume}
+    View Resume
   </a>
 
   {/* Download Resume */}
@@ -410,7 +506,7 @@ function App() {
     download
     className="inline-block bg-[#D4AF37] text-black px-6 py-3 rounded-full font-semibold text-center hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition duration-300"
   >
-    Download {onePieceLabels.resume}
+    Download Resume
   </a>
 
 </div>
@@ -510,7 +606,7 @@ function App() {
           <div className="text-center mb-16">
 
             <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-              {onePieceLabels.skills}
+              My Skills
             </p>
 
             <h2 className="text-4xl font-bold">
@@ -521,50 +617,20 @@ function App() {
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
 
-            {[
-              {
-                title: "Premiere Pro",
-                desc: "Professional video editing and storytelling."
-              },
-              {
-                title: "After Effects",
-                desc: "Motion graphics and visual effects."
-              },
-              {
-                title: "React",
-                desc: "Modern responsive frontend applications."
-              },
-              {
-                title: "Node.js",
-                desc: "Backend development and APIs."
-              },
-              {
-                title: "MongoDB",
-                desc: "Database management and integration."
-              },
-              {
-                title: "OBS Studio",
-                desc: "Live streaming and production setup."
-              },
-              {
-                title: "Blender",
-                desc: "Creating 3D animations and renders."
-              },
-              {
-                title: "Roblox Studio",
-                desc: "Game development and scripting."
-              },
-              {
-                title: "MS Office",
-                desc: "Word, PowerPoint and Excel experience."
-              }
-
-            ].map((skill, index) => (
+            {skills.map((skill, index) => (
 
               <div
                 key={index}
-                className="bg-[#111111] border border-gray-800 rounded-2xl p-8 hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500"
+                className={`theme-skill-card bg-[#111111] border border-gray-800 rounded-2xl p-8 hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500 ${themeToggleOn ? "one-piece-card" : ""}`}
               >
+                {themeToggleOn && (
+                  <img
+                    src={skill.themeLogo}
+                    alt=""
+                    className="one-piece-card__mark"
+                    aria-hidden="true"
+                  />
+                )}
 
                 <h3 className="text-2xl font-bold mb-4">
                   {skill.title}
@@ -601,7 +667,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        {onePieceLabels.services}
+        Services
       </p>
 
       <h2 className="text-4xl font-bold">
@@ -612,38 +678,26 @@ function App() {
 
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-      {[
-        {
-          icon: FiFilm,
-          title: "Video Editing",
-          desc: "Cinematic reels, smooth transitions, social edits and storytelling cuts."
-        },
-        {
-          icon: FiCode,
-          title: "Web Development",
-          desc: "Responsive portfolio, business and product websites built with modern tools."
-        },
-        {
-          icon: FiBox,
-          title: "3D Visuals",
-          desc: "Creative 3D renders, product-style visuals and motion-ready concepts."
-        },
-        {
-          icon: FiCpu,
-          title: "AI Prompting",
-          desc: "Up to date with AI knowledge and skilled at using AI tools for smart, creative and faster work."
-        }
-      ].map((service, index) => {
+      {services.map((service, index) => {
         const Icon = service.icon
 
         return (
           <div
             key={index}
-            className="bg-black border border-gray-800 rounded-2xl p-7 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,0.28)] hover:-translate-y-2 transition duration-500"
+            className={`theme-service-card bg-black border border-gray-800 rounded-2xl p-7 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,0.28)] hover:-translate-y-2 transition duration-500 ${themeToggleOn ? "one-piece-card" : ""}`}
           >
 
             <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-6">
-              <Icon className="text-3xl text-[#D4AF37]" />
+              {themeToggleOn ? (
+                <img
+                  src={service.themeLogo}
+                  alt=""
+                  className="h-10 w-10 object-contain"
+                  aria-hidden="true"
+                />
+              ) : (
+                <Icon className="text-3xl text-[#D4AF37]" />
+              )}
             </div>
 
             <h3 className="text-xl font-bold mb-4">
@@ -682,7 +736,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        {onePieceLabels.projects}
+        Projects
       </p>
 
       <h2 className="text-4xl font-bold">
@@ -694,125 +748,44 @@ function App() {
     {/* Grid */}
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-      {/* Card 1 */}
-      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
+      {projects.map((project) => (
+        <div
+          key={project.title}
+          className={`theme-project-card group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500 ${themeToggleOn ? "one-piece-card" : ""}`}
+        >
+          <div className="overflow-hidden">
+            <img
+              src={themeToggleOn ? project.themeImage : project.image}
+              alt=""
+              className={`h-56 w-[90%] mx-auto mt-4 rounded-2xl object-cover group-hover:scale-105 transition duration-700 ${themeToggleOn ? "one-piece-project-img" : ""}`}
+            />
+          </div>
 
-        <div className="overflow-hidden">
+          <div className="p-6">
+            <p className="text-[#D4AF37] text-sm mb-3">
+              {project.category}
+            </p>
 
-          <img
-  src="/images/edit_logo.png"
-  alt="project"
-  className="h-56 w-[90%] mx-auto mt-4 rounded-2xl object-cover group-hover:scale-105 transition duration-700"
-/>
+            <h3 className="text-2xl font-bold mb-4">
+              {project.title}
+            </h3>
 
+            <p className="text-gray-400 mb-6">
+              {project.desc}
+            </p>
+
+            <a
+              href={project.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <button className="border border-gray-700 px-5 py-2 rounded-full hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition duration-300">
+                View Project
+              </button>
+            </a>
+          </div>
         </div>
-
-        <div className="p-6">
-
-          <p className="text-[#D4AF37] text-sm mb-3">
-            Video Editing
-          </p>
-
-          <h3 className="text-2xl font-bold mb-4">
-            Video Edit
-          </h3>
-
-          <p className="text-gray-400 mb-6">
-            Cinematic storytelling with smooth transitions.
-          </p>
-
-          <a
-            href="https://drive.google.com/drive/folders/1efMW_BAGA_4nwJQeFEJI-fwzmNYYeoJb?usp=drive_link"
-            target="_blank"
-          >
-            <button className="border border-gray-700 px-5 py-2 rounded-full hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition duration-300">
-              View Project
-            </button>
-          </a>
-
-        </div>
-
-      </div>
-
-      {/* Card 2 */}
-      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
-
-        <div className="overflow-hidden">
-
-       <img
-  src="/images/web_logo.png"
-  alt="project"
-  className="h-56 w-[90%] mx-auto mt-4 rounded-2xl object-cover group-hover:scale-105 transition duration-700"
-/>
-
-        </div>
-
-        <div className="p-6">
-
-          <p className="text-[#D4AF37] text-sm mb-3">
-            Web Development
-          </p>
-
-          <h3 className="text-2xl font-bold mb-4">
-            E-commerce Website
-          </h3>
-
-          <p className="text-gray-400 mb-6">
-            Responsive project built using MongoDB and Node.js.
-          </p>
-
-          <a
-            href="https://neuraproject.netlify.app/"
-            target="_blank"
-          >
-            <button className="border border-gray-700 px-5 py-2 rounded-full hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition duration-300">
-              View Project
-            </button>
-          </a>
-
-        </div>
-
-      </div>
-
-      {/* Card 3 */}
-      <div className="group bg-[#1c1c1c] border border-gray-700 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(255,255,255,0.06)] hover:border-[#D4AF37] hover:shadow-[0_0_40px_rgba(212,175,55,0.35)] hover:-translate-y-2 transition duration-500">
-
-        <div className="overflow-hidden">
-
-        <img
-  src="/images/3d_logo.png"
-  alt="project"
-  className="h-56 w-[90%] mx-auto mt-4 rounded-2xl object-cover group-hover:scale-105 transition duration-700"
-/>
-
-        </div>
-
-        <div className="p-6">
-
-          <p className="text-[#D4AF37] text-sm mb-3">
-            3D Design
-          </p>
-
-          <h3 className="text-2xl font-bold mb-4">
-            3D Creative Project
-          </h3>
-
-          <p className="text-gray-400 mb-6">
-            3D visuals and cinematic renders.
-          </p>
-
-          <a
-            href="https://drive.google.com/drive/folders/1g8lWP0LlUI2xz9_5PFhxM7VJzFsM-JJf?usp=sharing"
-            target="_blank"
-          >
-            <button className="border border-gray-700 px-5 py-2 rounded-full hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition duration-300">
-              View Project
-            </button>
-          </a>
-
-        </div>
-
-      </div>
+      ))}
 
     </div>
 
@@ -828,7 +801,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        {onePieceLabels.featuredReel}
+        Featured Reel
       </p>
 
       <h2 className="text-4xl font-bold mb-6">
@@ -896,7 +869,7 @@ function App() {
     <div className="text-center mb-16">
 
       <p className="text-[#D4AF37] uppercase tracking-[4px] mb-4">
-        {onePieceLabels.contact}
+        Contact
       </p>
 
       <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
@@ -1008,15 +981,15 @@ function App() {
             </a>
 
             <a href="#skills" className="hover:text-[#D4AF37]">
-              {onePieceLabels.skills}
+              Skills
             </a>
 
             <a href="#projects" className="hover:text-[#D4AF37]">
-              {onePieceLabels.projects}
+              Projects
             </a>
 
             <a href="#contact" className="hover:text-[#D4AF37]">
-              {onePieceLabels.contact}
+              Contact
             </a>
 
           </div>
@@ -1049,9 +1022,6 @@ function App() {
                 <span className="footer-theme-toggle__thumb">
                   {themeToggleOn ? <FiAnchor /> : "J"}
                 </span>
-              </span>
-              <span className="footer-theme-toggle__label">
-                {onePieceLabels.themeButton}
               </span>
             </button>
 
